@@ -8,10 +8,14 @@
     :root{--wow-bg:#0b0f19;--wow-panel:#121826;--wow-border:#2a3449;--wow-text:#e6eefc;--wow-accent:#c7a046;--wow-accent-hover:#e0c26a;--wow-muted:#9aa7bf;--wow-danger:#c95a5a;--wow-success:#6acb9c}
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     html,body{margin:0;padding:0;background:radial-gradient(1200px 600px at 50% -10%,#1b2438,var(--wow-bg));color:var(--wow-text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
-    .app{max-width:560px;margin:0 auto;padding:12px;padding-bottom:40px}
+    .app{max-width:560px;margin:0 auto;padding:12px;padding-bottom:80px}
     .header{text-align:center;margin:8px 0 12px;border-bottom:2px solid var(--wow-border);padding-bottom:10px}
     .title{font-size:24px;font-weight:800;letter-spacing:0.5px;color:var(--wow-accent);text-shadow:0 0 10px rgba(199,160,70,0.35);margin:0}
     .subtitle{font-size:12px;color:var(--wow-muted);margin-top:4px}
+    .tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px}
+    .tab-btn{flex:1 1 auto;min-width:80px;padding:10px 8px;border-radius:8px;border:1px solid var(--wow-border);background:linear-gradient(180deg,#1f2a40,#141b2a);color:var(--wow-text);font-weight:700;font-size:13px;text-align:center;cursor:pointer;transition:transform 0.08s ease,background 0.2s ease,border-color 0.2s ease;white-space:nowrap}
+    .tab-btn.active{background:linear-gradient(180deg,#2a3449,#1f2a40);border-color:var(--wow-accent);color:var(--wow-accent)}
+    .tab-btn:active{transform:translateY(1px)}
     .panel{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));border:1px solid var(--wow-border);border-radius:10px;padding:12px;margin-bottom:12px;box-shadow:0 8px 24px rgba(0,0,0,0.35)}
     .panel-title{font-size:15px;font-weight:700;color:var(--wow-accent);margin:0 0 10px}
     .row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
@@ -48,6 +52,7 @@
     .status.success{border-color:var(--wow-success);color:#baffd9}
     .status.error{border-color:var(--wow-danger);color:#ffb3b3}
     .hidden{display:none!important}
+    .section{display:none}.section.active{display:block}
   </style>
 </head>
 <body>
@@ -56,61 +61,135 @@
       <h1 class="title">WoW Checklist</h1>
       <div class="subtitle">Great Vault & Weekly Tracker</div>
     </div>
-    <div class="panel">
-      <div class="panel-title">Персонаж</div>
-      <div class="char-select-row">
-        <select id="charSelect"></select>
-        <button class="btn small primary" id="addCharBtn">+ Персонаж</button>
-      </div>
-      <div class="row">
-        <button class="btn primary" id="updateRaiderBtn" style="width:100%">Обновить из Raider.IO</button>
-      </div>
-      <div class="row">
-        <button class="btn" id="configureBtn" style="width:100%">Настроить отображение</button>
-      </div>
-      <div id="raiderStatus" class="status" style="display:none"></div>
+    <div class="tabs">
+      <div class="tab-btn active" data-tab="vault">Vault</div>
+      <div class="tab-btn" data-tab="housing">Хаузинг</div>
+      <div class="tab-btn" data-tab="professions">Профессии</div>
+      <div class="tab-btn" data-tab="gold">Заработок</div>
+      <div class="tab-btn" data-tab="chars">Персонажи</div>
     </div>
-    <div class="panel" id="vaultPanel">
-      <div class="panel-title">Great Vault</div>
-      <div id="raidSection">
-        <div class="panel-title" style="font-size:14px;margin-top:10px">Рейды</div>
-        <div id="raidBossesList"></div>
-        <div class="progress-wrap">
-          <div class="progress-bar"><div class="progress-fill" id="raidProgressFill"></div></div>
-          <div class="progress-text"><span>Прогресс рейда</span><span id="raidProgressText">0 / 0</span></div>
+    <div class="section active" id="vault">
+      <div class="panel">
+        <div class="panel-title">Персонаж</div>
+        <div class="char-select-row">
+          <select id="charSelect"></select>
         </div>
-        <div class="divider"></div>
-      </div>
-      <div id="keysSection">
-        <div class="panel-title" style="font-size:14px;margin-top:10px">Ключи 10+ (M+)</div>
         <div class="row">
-          <div class="label"><div>Ключей 10+ за неделю</div><div class="muted">Цель: 8</div></div>
-          <button class="btn small primary" id="addKeyBtn">+1</button>
-          <button class="btn small" id="resetKeysBtn">Сброс</button>
+          <button class="btn primary" id="updateRaiderBtn" style="width:100%">Обновить из Raider.IO</button>
         </div>
-        <div class="progress-wrap">
-          <div class="progress-bar"><div class="progress-fill" id="keysProgressFill"></div></div>
-          <div class="progress-text"><span id="keysProgressText">0 / 8</span></div>
-        </div>
-        <div class="divider"></div>
-      </div>
-      <div id="worldSection">
-        <div class="panel-title" style="font-size:14px;margin-top:10px">World активности</div>
-        <div class="hint">Delves, Prey Hunts, локальные события и т. п.</div>
         <div class="row">
-          <input type="text" id="worldActivityInput" placeholder="Название активности" />
-          <button class="btn small primary" id="addWorldBtn">Добавить</button>
+          <button class="btn" id="configureBtn" style="width:100%">Настроить отображение</button>
         </div>
-        <div id="worldActivitiesList" style="margin-top:8px"></div>
-        <div class="progress-wrap">
-          <div class="progress-bar"><div class="progress-fill" id="worldProgressFill"></div></div>
-          <div class="progress-text"><span>World прогресс</span><span id="worldProgressText">0 / 8</span></div>
+        <div id="raiderStatus" class="status" style="display:none"></div>
+      </div>
+      <div class="panel" id="vaultPanel">
+        <div class="panel-title">Great Vault</div>
+        <div id="raidSection">
+          <div class="panel-title" style="font-size:14px;margin-top:10px">Рейды</div>
+          <div id="raidBossesList"></div>
+          <div class="progress-wrap">
+            <div class="progress-bar"><div class="progress-fill" id="raidProgressFill"></div></div>
+            <div class="progress-text"><span>Прогресс рейда</span><span id="raidProgressText">0 / 0</span></div>
+          </div>
+          <div class="divider"></div>
+        </div>
+        <div id="keysSection">
+          <div class="panel-title" style="font-size:14px;margin-top:10px">Ключи 10+ (M+)</div>
+          <div class="row">
+            <div class="label"><div>Ключей 10+ за неделю</div><div class="muted">Цель: 8</div></div>
+            <button class="btn small primary" id="addKeyBtn">+1</button>
+            <button class="btn small" id="resetKeysBtn">Сброс</button>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-bar"><div class="progress-fill" id="keysProgressFill"></div></div>
+            <div class="progress-text"><span id="keysProgressText">0 / 8</span></div>
+          </div>
+          <div class="divider"></div>
+        </div>
+        <div id="worldSection">
+          <div class="panel-title" style="font-size:14px;margin-top:10px">World активности</div>
+          <div class="hint">Delves, Prey Hunts, локальные события и т. п.</div>
+          <div class="row">
+            <input type="text" id="worldActivityInput" placeholder="Название активности" />
+            <button class="btn small primary" id="addWorldBtn">Добавить</button>
+          </div>
+          <div id="worldActivitiesList" style="margin-top:8px"></div>
+          <div class="progress-wrap">
+            <div class="progress-bar"><div class="progress-fill" id="worldProgressFill"></div></div>
+            <div class="progress-text"><span>World прогресс</span><span id="worldProgressText">0 / 8</span></div>
+          </div>
+          <div class="divider"></div>
+        </div>
+        <div id="tasksSection">
+          <div class="panel-title" style="font-size:14px;margin-top:10px">Персональные задачи</div>
+          <div id="tasksList"></div>
+        </div>
+      </div>
+    </div>
+    <div class="section" id="housing">
+      <div class="panel">
+        <div class="panel-title">Хаузинг</div>
+        <div class="checkbox-row"><input type="checkbox" id="capcakeCheckbox" /><label for="capcakeCheckbox" class="label">Забрать капкейк (еженедельно)</label></div>
+        <div class="checkbox-row"><input type="checkbox" id="neighborCheckbox" /><label for="neighborCheckbox" class="label">Проверить соседство (ежемесячно)</label></div>
+        <div class="checkbox-row"><input type="checkbox" id="vendorsCheckbox" /><label for="vendorsCheckbox" class="label">Проверить торговцев (ежемесячно)</label></div>
+      </div>
+    </div>
+    <div class="section" id="professions">
+      <div class="panel">
+        <div class="panel-title">Персонажи</div>
+        <div class="row">
+          <input type="text" id="charNameInput" placeholder="Имя персонажа" />
+          <button class="btn small primary" id="addCharProfBtn">Добавить</button>
+        </div>
+        <div id="charactersProfList" style="margin-top:8px"></div>
+      </div>
+      <div class="panel" id="professionsPanel" style="display:none">
+        <div class="panel-title"><span id="selectedCharName"></span> — профессии</div>
+        <div class="row">
+          <input type="text" id="profNameInput" placeholder="Название профессии" />
+          <button class="btn small primary" id="addProfBtn">Добавить</button>
+        </div>
+        <div id="professionsList" style="margin-top:8px"></div>
+        <button class="btn small" id="backToCharsBtn" style="margin-top:10px">← Назад к персонажам</button>
+      </div>
+    </div>
+    <div class="section" id="gold">
+      <div class="panel">
+        <div class="panel-title">Добавить заказ</div>
+        <div class="row"><input type="text" id="orderIdInput" placeholder="ID заказа (например, #123)" /></div>
+        <div class="row"><input type="number" id="orderAmountInput" placeholder="Сумма (голда)" /></div>
+        <div class="row"><input type="date" id="orderDateInput" /></div>
+        <div class="row">
+          <select id="orderTypeSelect">
+            <option value="boost">Буст</option>
+            <option value="craft">Крафт</option>
+            <option value="farm">Фарм</option>
+            <option value="other">Другое</option>
+          </select>
+        </div>
+        <button class="btn primary" id="addOrderBtn" style="width:100%">Добавить заказ</button>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Отчёт по периоду</div>
+        <div class="row">
+          <button class="btn small" data-period="7d">7 дней</button>
+          <button class="btn small" data-period="30d">30 дней</button>
+          <button class="btn small" data-period="all">Всё время</button>
         </div>
         <div class="divider"></div>
+        <div class="row"><div class="label">Сумма:</div><div class="label" id="reportSum" style="text-align:right;font-weight:700">0</div></div>
+        <div class="row"><div class="label">Заказов:</div><div class="label" id="reportCount" style="text-align:right">0</div></div>
+        <div class="row"><div class="label">Среднее:</div><div class="label" id="reportAvg" style="text-align:right">0</div></div>
       </div>
-      <div id="tasksSection">
-        <div class="panel-title" style="font-size:14px;margin-top:10px">Персональные задачи</div>
-        <div id="tasksList"></div>
+      <div class="panel">
+        <div class="panel-title">Последние заказы</div>
+        <div id="ordersList"></div>
+      </div>
+    </div>
+    <div class="section" id="chars">
+      <div class="panel">
+        <div class="panel-title">Управление персонажами</div>
+        <div id="charsManageList"></div>
       </div>
     </div>
     <div class="footer-note">WoW Checklist • Все данные сохраняются локально</div>
@@ -150,34 +229,41 @@
   </div>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
-    const STORAGE_KEY='wowChecklistV3';
+    const STORAGE_KEY='wowChecklistV4';
     function loadState(){const raw=localStorage.getItem(STORAGE_KEY);if(raw){try{return JSON.parse(raw)}catch(e){console.error('Failed to parse state',e)}}return defaultState()}
     function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
     function defaultState(){return{characters:[],selectedCharId:null,lastResetTimestamp:null,resetDay:3,resetHour:9,resetMinute:0}}
     let state=loadState();
     function generateId(){return'id_'+Math.random().toString(36).slice(2,10)}
-    function defaultCharData(){return{raidBosses:[{id:'b1',name:'Немриса (Грот)',done:false,difficulty:'normal'},{id:'b2',name:'Venomous Abyss — Босс 1',done:false,difficulty:'normal'},{id:'b3',name:'Venomous Abyss — Босс 2',done:false,difficulty:'normal'},{id:'b4',name:'Venomous Abyss — Босс 3',done:false,difficulty:'normal'},{id:'b5',name:'Venomous Abyss — Босс 4',done:false,difficulty:'normal'},{id:'b6',name:'Venomous Abyss — Босс 5',done:false,difficulty:'normal'}],keysCount:0,worldActivities:[],tasks:{}}}
+    function defaultCharData(){return{raidBosses:[{id:'b1',name:'Nek\'zali the Soulcoiler',done:false,difficulty:'normal'},{id:'b2',name:'Entombed Sentinels',done:false,difficulty:'normal'},{id:'b3',name:'Vashnik the Malignant',done:false,difficulty:'normal'},{id:'b4',name:'The Lost Explorers',done:false,difficulty:'normal'},{id:'b5',name:'Sszorak',done:false,difficulty:'normal'},{id:'b6',name:'The Twin Fangs',done:false,difficulty:'normal'},{id:'b7',name:'The Coiled Altar',done:false,difficulty:'normal'},{id:'b8',name:'Ula\'tek',done:false,difficulty:'normal'},{id:'b9',name:'Nymrissa Wavecaller',done:false,difficulty:'normal'}],keysCount:0,worldActivities:[],tasks:{},housing:{capcake:false,neighbor:false,vendors:false},professions:[]}}
     function defaultCharSettings(){return{showRaid:true,showKeys:true,showWorld:true,showTasks:true,tasks:{showCapcake:true,showNeighbor:true,showVendors:true,showCrests:true}}}
     function getSelectedChar(){return state.characters.find(c=>c.id===state.selectedCharId)}
-    function checkAndApplyWeeklyReset(){const now=Date.now();const resetDay=Number(state.resetDay);const resetHour=Number(state.resetHour);const resetMinute=Number(state.resetMinute);const d=new Date();d.setHours(resetHour,resetMinute,0,0);const currentDay=d.getDay();let diff=resetDay-currentDay;if(diff<0)diff+=7;const lastReset=new Date(d);lastReset.setDate(d.getDate()-diff);const lastResetTs=lastReset.getTime();if(!state.lastResetTimestamp||lastResetTs>state.lastResetTimestamp){state.lastResetTimestamp=lastResetTs;state.characters.forEach(ch=>{ch.data.raidBosses.forEach(b=>{b.done=false});ch.data.keysCount=0;ch.data.worldActivities=[]});saveState()}}
-    function renderCharSelect(){const select=document.getElementById('charSelect');select.innerHTML='';if(state.characters.length===0){const opt=document.createElement('option');opt.textContent='Нет персонажей';opt.disabled=true;select.appendChild(opt);state.selectedCharId=null}else{state.characters.forEach(ch=>{const opt=document.createElement('option');opt.value=ch.id;opt.textContent=`${ch.name}-${ch.realm}`;select.appendChild(opt)});if(!state.selectedCharId&&state.characters.length>0){state.selectedCharId=state.characters[0].id}select.value=state.selectedCharId||''}updateButtonsVisibility()}
-    function updateButtonsVisibility(){const char=getSelectedChar();const updateBtn=document.getElementById('updateRaiderBtn');const configureBtn=document.getElementById('configureBtn');if(char){updateBtn.classList.remove('hidden');configureBtn.classList.remove('hidden')}else{updateBtn.classList.add('hidden');configureBtn.classList.add('hidden')}}
+    function checkAndApplyWeeklyReset(){const now=Date.now();const resetDay=Number(state.resetDay);const resetHour=Number(state.resetHour);const resetMinute=Number(state.resetMinute);const d=new Date();d.setHours(resetHour,resetMinute,0,0);const currentDay=d.getDay();let diff=resetDay-currentDay;if(diff<0)diff+=7;const lastReset=new Date(d);lastReset.setDate(d.getDate()-diff);const lastResetTs=lastReset.getTime();if(!state.lastResetTimestamp||lastResetTs>state.lastResetTimestamp){state.lastResetTimestamp=lastResetTs;state.characters.forEach(ch=>{ch.data.raidBosses.forEach(b=>{b.done=false});ch.data.keysCount=0;ch.data.worldActivities=[];ch.data.housing={capcake:false,neighbor:false,vendors:false}});saveState()}}
+    function renderTabs(){const tabs=document.querySelectorAll('.tab-btn');tabs.forEach(tab=>{tab.addEventListener('click',()=>{tabs.forEach(t=>t.classList.remove('active'));tab.classList.add('active');const target=tab.getAttribute('data-tab');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(target).classList.add('active');if(target==='vault'){renderCharSelect();renderVault()}if(target==='housing'){renderHousing()}if(target==='professions'){renderProfessions()}if(target==='gold'){renderGold()}if(target==='chars'){renderCharsManage()}})})}
+    function renderCharSelect(){const select=document.getElementById('charSelect');select.innerHTML='';if(state.characters.length===0){const opt=document.createElement('option');opt.textContent='Нет персонажей';opt.disabled=true;select.appendChild(opt);state.selectedCharId=null}else{state.characters.forEach(ch=>{const opt=document.createElement('option');opt.value=ch.id;opt.textContent=`${ch.name}-${ch.realm}`;select.appendChild(opt)});if(!state.selectedCharId&&state.characters.length>0){state.selectedCharId=state.characters[0].id}select.value=state.selectedCharId||''}}
     function renderVault(){const char=getSelectedChar();if(!char){document.getElementById('vaultPanel').innerHTML='<div class="hint">Добавьте персонажа, чтобы видеть прогресс</div>';return}const settings=char.settings||defaultCharSettings();const data=char.data||defaultCharData();document.getElementById('raidSection').style.display=settings.showRaid?'block':'none';document.getElementById('keysSection').style.display=settings.showKeys?'block':'none';document.getElementById('worldSection').style.display=settings.showWorld?'block':'none';document.getElementById('tasksSection').style.display=settings.showTasks?'block':'none';renderRaidBosses(data);renderKeys(data);renderWorld(data);renderTasks(char)}
     function renderRaidBosses(data){const container=document.getElementById('raidBossesList');container.innerHTML='';data.raidBosses.forEach((boss,idx)=>{const row=document.createElement('div');row.className='checkbox-row';const cb=document.createElement('input');cb.type='checkbox';cb.checked=boss.done;cb.addEventListener('change',()=>{const char=getSelectedChar();char.data.raidBosses[idx].done=cb.checked;saveState();renderRaidBosses(char.data)});const label=document.createElement('div');label.style.flex='1 1 auto';label.innerHTML=`<div style="font-weight:600">${boss.name}</div><div class="muted">Сложность</div>`;const diffSelect=document.createElement('select');diffSelect.style.width='110px';diffSelect.style.marginLeft='8px';['normal','heroic','mythic'].forEach(level=>{const opt=document.createElement('option');opt.value=level;opt.textContent=level==='normal'?'Normal':level==='heroic'?'Heroic':'Mythic';diffSelect.appendChild(opt)});diffSelect.value=boss.difficulty;diffSelect.addEventListener('change',()=>{const char=getSelectedChar();char.data.raidBosses[idx].difficulty=diffSelect.value;saveState()});row.appendChild(cb);row.appendChild(label);row.appendChild(diffSelect);container.appendChild(row)});const doneCount=data.raidBosses.filter(b=>b.done).length;const total=data.raidBosses.length;const fillPct=total?(doneCount/total)*100:0;document.getElementById('raidProgressFill').style.width=fillPct+'%';document.getElementById('raidProgressText').textContent=`${doneCount} / ${total}`}
     function renderKeys(data){const done=data.keysCount;const target=8;const fillPct=Math.min(100,(done/target)*100);document.getElementById('keysProgressFill').style.width=fillPct+'%';document.getElementById('keysProgressText').textContent=`${done} / ${target}`}
     function renderWorld(data){const container=document.getElementById('worldActivitiesList');container.innerHTML='';data.worldActivities.forEach((act,idx)=>{const row=document.createElement('div');row.className='checkbox-row';const cb=document.createElement('input');cb.type='checkbox';cb.checked=act.done;cb.addEventListener('change',()=>{const char=getSelectedChar();char.data.worldActivities[idx].done=cb.checked;saveState();renderWorld(char.data)});const label=document.createElement('div');label.style.flex='1 1 auto';label.textContent=act.name;const delBtn=document.createElement('button');delBtn.className='btn small danger';delBtn.textContent='×';delBtn.addEventListener('click',()=>{const char=getSelectedChar();char.data.worldActivities.splice(idx,1);saveState();renderWorld(char.data)});row.appendChild(cb);row.appendChild(label);row.appendChild(delBtn);container.appendChild(row)});const doneCount=data.worldActivities.filter(a=>a.done).length;const target=8;const fillPct=Math.min(100,(doneCount/target)*100);document.getElementById('worldProgressFill').style.width=fillPct+'%';document.getElementById('worldProgressText').textContent=`${doneCount} / ${target}`}
     function renderTasks(char){const container=document.getElementById('tasksList');if(!container)return;container.innerHTML='';const tasks=char.settings?.tasks||{};if(tasks.showCapcake){const row=createTaskRow('Капкейк',char,'capcake');container.appendChild(row)}if(tasks.showNeighbor){const row=createTaskRow('Соседство',char,'neighbor');container.appendChild(row)}if(tasks.showVendors){const row=createTaskRow('Торговцы',char,'vendors');container.appendChild(row)}if(tasks.showCrests){const row=createTaskRow('Кап крестов',char,'crests');container.appendChild(row)}}
     function createTaskRow(label,char,key){const row=document.createElement('div');row.className='checkbox-row';const cb=document.createElement('input');cb.type='checkbox';cb.checked=char.data.tasks?.[key]||false;cb.addEventListener('change',()=>{if(!char.data.tasks)char.data.tasks={};char.data.tasks[key]=cb.checked;saveState()});const lbl=document.createElement('label');lbl.className='label';lbl.textContent=label;row.appendChild(cb);row.appendChild(lbl);return row}
+    function renderHousing(){const char=getSelectedChar();if(!char){document.getElementById('capcakeCheckbox').disabled=true;document.getElementById('neighborCheckbox').disabled=true;document.getElementById('vendorsCheckbox').disabled=true;return}document.getElementById('capcakeCheckbox').disabled=false;document.getElementById('neighborCheckbox').disabled=false;document.getElementById('vendorsCheckbox').disabled=false;document.getElementById('capcakeCheckbox').checked=char.data.housing?.capcake||false;document.getElementById('neighborCheckbox').checked=char.data.housing?.neighbor||false;document.getElementById('vendorsCheckbox').checked=char.data.housing?.vendors||false}
+    function renderProfessions(){const charsContainer=document.getElementById('charactersProfList');const professionsPanel=document.getElementById('professionsPanel');const professionsList=document.getElementById('professionsList');const selectedCharNameEl=document.getElementById('selectedCharName');charsContainer.innerHTML='';state.characters.forEach((ch,idx)=>{const row=document.createElement('div');row.className='checkbox-row';const label=document.createElement('div');label.style.flex='1 1 auto';label.textContent=ch.name;const delBtn=document.createElement('button');delBtn.className='btn small danger';delBtn.textContent='×';delBtn.addEventListener('click',()=>{state.characters.splice(idx,1);if(state.selectedCharId===ch.id){state.selectedCharId=null;professionsPanel.style.display='none'}saveState();renderProfessions()});const openBtn=document.createElement('button');openBtn.className='btn small';openBtn.textContent='Открыть';openBtn.addEventListener('click',()=>{state.selectedCharId=ch.id;professionsPanel.style.display='block';selectedCharNameEl.textContent=ch.name;renderProfessionsList()});row.appendChild(label);row.appendChild(openBtn);row.appendChild(delBtn);charsContainer.appendChild(row)});if(state.selectedCharId){professionsPanel.style.display='block';const ch=state.characters.find(c=>c.id===state.selectedCharId);if(ch){selectedCharNameEl.textContent=ch.name;renderProfessionsList()}}else{professionsPanel.style.display='none'}}
+    function renderProfessionsList(){const container=document.getElementById('professionsList');container.innerHTML='';const ch=state.characters.find(c=>c.id===state.selectedCharId);if(!ch)return;ch.data.professions=ch.data.professions||[];ch.data.professions.forEach((prof,idx)=>{const wrap=document.createElement('div');wrap.style.marginBottom='12px';wrap.style.border='1px solid var(--wow-border)';wrap.style.borderRadius='8px';wrap.style.padding='8px';const header=document.createElement('div');header.style.display='flex';header.style.alignItems='center';header.style.gap='8px';header.style.marginBottom='6px';const nameEl=document.createElement('div');nameEl.style.flex='1 1 auto';nameEl.style.fontWeight='700';nameEl.textContent=prof.name;const delBtn=document.createElement('button');delBtn.className='btn small danger';delBtn.textContent='×';delBtn.addEventListener('click',()=>{ch.data.professions.splice(idx,1);saveState();renderProfessionsList()});header.appendChild(nameEl);header.appendChild(delBtn);const maxConc=prof.maxConcentration||100;const currentConc=Math.min(maxConc,prof.concentration||0);const rate=prof.rate||1;const barWrap=document.createElement('div');barWrap.className='progress-wrap';const bar=document.createElement('div');bar.className='progress-bar';const fill=document.createElement('div');fill.className='progress-fill';const fillPct=maxConc?(currentConc/maxConc)*100:0;fill.style.width=fillPct+'%';bar.appendChild(fill);const text=document.createElement('div');text.className='progress-text';const minutesToMax=maxConc&&rate?Math.ceil((maxConc-currentConc)/rate):0;text.textContent=`${currentConc} / ${maxConc} • до макс. ~${minutesToMax} мин`;barWrap.appendChild(bar);barWrap.appendChild(text);const btnRow=document.createElement('div');btnRow.className='row';btnRow.style.marginTop='6px';[10,20,50].forEach(val=>{const btn=document.createElement('button');btn.className='btn small';btn.textContent=`−${val}`;btn.addEventListener('click',()=>{prof.concentration=Math.max(0,(prof.concentration||0)-val);saveState();renderProfessionsList()});btnRow.appendChild(btn)});const editBtn=document.createElement('button');editBtn.className='btn small';editBtn.textContent='Изменить';editBtn.addEventListener('click',()=>{const newConc=prompt('Текущая концентрация:',prof.concentration||0);const newMax=prompt('Максимум концентрации:',prof.maxConcentration||100);const newRate=prompt('Скорость восстановления (ед./мин):',prof.rate||1);if(newConc!==null)prof.concentration=Number(newConc);if(newMax!==null)prof.maxConcentration=Number(newMax);if(newRate!==null)prof.rate=Number(newRate);saveState();renderProfessionsList()});btnRow.appendChild(editBtn);wrap.appendChild(header);wrap.appendChild(barWrap);wrap.appendChild(btnRow);container.appendChild(wrap)});const now=Date.now();if(!ch.lastConcUpdate){ch.lastConcUpdate=now}else{const dtMin=(now-ch.lastConcUpdate)/60000;ch.data.professions.forEach(p=>{if(p.rate){const gain=Math.floor(dtMin*p.rate);if(gain>0){p.concentration=Math.min(p.maxConcentration||100,(p.concentration||0)+gain)}}});ch.lastConcUpdate=now;saveState()}}
+    function renderGold(){const container=document.getElementById('ordersList');container.innerHTML='';const sorted=[...state.orders].sort((a,b)=>new Date(b.date)-new Date(a.date));sorted.forEach((order,idx)=>{const row=document.createElement('div');row.className='checkbox-row';const info=document.createElement('div');info.style.flex='1 1 auto';info.innerHTML=`<div style="font-weight:600">${order.orderId} • ${formatDate(order.date)}</div><div class="muted">${order.typeLabel} • ${order.amount} голды</div>`;const delBtn=document.createElement('button');delBtn.className='btn small danger';delBtn.textContent='×';delBtn.addEventListener('click',()=>{const realIdx=state.orders.findIndex(o=>o.id===order.id);if(realIdx>=0){state.orders.splice(realIdx,1);saveState();renderGold()}});row.appendChild(info);row.appendChild(delBtn);container.appendChild(row)});applyReportFilter('all')}
+    function formatDate(iso){const d=new Date(iso);const day=String(d.getDate()).padStart(2,'0');const month=String(d.getMonth()+1).padStart(2,'0');const year=d.getFullYear();return`${day}.${month}.${year}`}
+    function applyReportFilter(period){const now=new Date();let start=new Date(0);if(period==='7d'){start=new Date(now);start.setDate(now.getDate()-7)}else if(period==='30d'){start=new Date(now);start.setDate(now.getDate()-30)}const filtered=state.orders.filter(o=>new Date(o.date)>=start);const sum=filtered.reduce((s,o)=>s+o.amount,0);const count=filtered.length;const avg=count?Math.round(sum/count):0;document.getElementById('reportSum').textContent=sum;document.getElementById('reportCount').textContent=count;document.getElementById('reportAvg').textContent=avg}
+    function renderCharsManage(){const container=document.getElementById('charsManageList');container.innerHTML='';state.characters.forEach((ch,idx)=>{const row=document.createElement('div');row.className='checkbox-row';const label=document.createElement('div');label.style.flex='1 1 auto';label.textContent=`${ch.name}-${ch.realm}`;const delBtn=document.createElement('button');delBtn.className='btn small danger';delBtn.textContent='Удалить';delBtn.addEventListener('click',()=>{if(confirm(`Удалить персонажа ${ch.name}-${ch.realm}?`)){state.characters.splice(idx,1);if(state.selectedCharId===ch.id){state.selectedCharId=null}saveState();renderCharsManage();renderCharSelect()}});row.appendChild(label);row.appendChild(delBtn);container.appendChild(row)})}
     function openAddCharModal(){document.getElementById('addCharModal').classList.add('active');document.getElementById('newCharNameInput').value='';document.getElementById('newCharRealmInput').value='';document.getElementById('newCharRegionInput').value='eu'}
     function closeAddCharModal(){document.getElementById('addCharModal').classList.remove('active')}
     function openConfigureModal(){const char=getSelectedChar();if(!char)return;const settings=char.settings||defaultCharSettings();const tasks=settings.tasks||{};document.getElementById('showRaidCheckbox').checked=settings.showRaid;document.getElementById('showKeysCheckbox').checked=settings.showKeys;document.getElementById('showWorldCheckbox').checked=settings.showWorld;document.getElementById('showCapcakeCheckbox').checked=tasks.showCapcake!==false;document.getElementById('showNeighborCheckbox').checked=tasks.showNeighbor!==false;document.getElementById('showVendorsCheckbox').checked=tasks.showVendors!==false;document.getElementById('showCrestsCheckbox').checked=tasks.showCrests!==false;document.getElementById('configureModal').classList.add('active')}
     function closeConfigureModal(){document.getElementById('configureModal').classList.remove('active')}
     function showRaiderStatus(message,type){const el=document.getElementById('raiderStatus');el.textContent=message;el.className='status '+(type==='success'?'success':'error');el.style.display='block';setTimeout(()=>{el.style.display='none'},6000)}
     async function updateFromRaiderIO(){const char=getSelectedChar();if(!char){showRaiderStatus('Выберите или добавьте персонажа','error');return}const region=char.region||'eu';const realm=char.realm;const name=char.name;showRaiderStatus('Загрузка данных из Raider.IO...','error');try{const url=`https://raider.io/api/v1/characters/profile?region=${region}&realm=${encodeURIComponent(realm)}&name=${encodeURIComponent(name)}&fields=raid_progression,mythic_plus_recent_runs`;const res=await fetch(url);if(!res.ok)throw new Error('HTTP '+res.status);const data=await res.json();if(data.raid_progression){const raidName='Nymrissa Wavecaller';const rp=data.raid_progression[raidName];if(rp){const normalDefeated=rp.normal?.bosses_defeated||0;const heroicDefeated=rp.heroic?.bosses_defeated||0;const mythicDefeated=rp.mythic?.bosses_defeated||0;const totalDefeated=Math.max(normalDefeated,heroicDefeated,mythicDefeated);for(let i=0;i<Math.min(totalDefeated,char.data.raidBosses.length);i++){char.data.raidBosses[i].done=true}}}if(data.mythic_plus_recent_runs&&Array.isArray(data.mythic_plus_recent_runs)){const keys10plus=data.mythic_plus_recent_runs.filter(run=>(run.mythic_level||0)>=10).length;char.data.keysCount=keys10plus}saveState();renderVault();showRaiderStatus('Данные обновлены','success')}catch(err){console.error(err);showRaiderStatus('Не удалось загрузить данные. Проверь регион/сервер/имя.','error')}}
-    function initCharHandlers(){const select=document.getElementById('charSelect');select.addEventListener('change',()=>{state.selectedCharId=select.value||null;saveState();renderVault()});document.getElementById('addCharBtn').addEventListener('click',openAddCharModal);document.getElementById('cancelAddCharBtn').addEventListener('click',closeAddCharModal);document.getElementById('saveAddCharBtn').addEventListener('click',()=>{const name=document.getElementById('newCharNameInput').value.trim();const realm=document.getElementById('newCharRealmInput').value.trim();const region=(document.getElementById('newCharRegionInput').value.trim()||'eu').toLowerCase();if(!name||!realm){alert('Введи имя и сервер');return}const newChar={id:generateId(),name,realm,region,settings:defaultCharSettings(),data:defaultCharData()};state.characters.push(newChar);state.selectedCharId=newChar.id;saveState();closeAddCharModal();renderCharSelect();renderVault()});document.getElementById('updateRaiderBtn').addEventListener('click',updateFromRaiderIO)}
-    function initConfigureHandlers(){document.getElementById('configureBtn').addEventListener('click',openConfigureModal);document.getElementById('closeConfigureBtn').addEventListener('click',closeConfigureModal);document.getElementById('applyForCharBtn').addEventListener('click',()=>{const char=getSelectedChar();if(!char)return;char.settings={showRaid:document.getElementById('showRaidCheckbox').checked,showKeys:document.getElementById('showKeysCheckbox').checked,showWorld:document.getElementById('showWorldCheckbox').checked,showTasks:true,tasks:{showCapcake:document.getElementById('showCapcakeCheckbox').checked,showNeighbor:document.getElementById('showNeighborCheckbox').checked,showVendors:document.getElementById('showVendorsCheckbox').checked,showCrests:document.getElementById('showCrestsCheckbox').checked}};saveState();closeConfigureModal();renderVault()});document.getElementById('applyForAllBtn').addEventListener('click',()=>{const settings={showRaid:document.getElementById('showRaidCheckbox').checked,showKeys:document.getElementById('showKeysCheckbox').checked,showWorld:document.getElementById('showWorldCheckbox').checked,showTasks:true,tasks:{showCapcake:document.getElementById('showCapcakeCheckbox').checked,showNeighbor:document.getElementById('showNeighborCheckbox').checked,showVendors:document.getElementById('showVendorsCheckbox').checked,showCrests:document.getElementById('showCrestsCheckbox').checked}};state.characters.forEach(ch=>{ch.settings=settings});saveState();closeConfigureModal();renderVault()})}
-    function initVaultHandlers(){document.getElementById('addKeyBtn').addEventListener('click',()=>{const char=getSelectedChar();if(!char)return;char.data.keysCount=Math.min(999,char.data.keysCount+1);saveState();renderVault()});document.getElementById('resetKeysBtn').addEventListener('click',()=>{const char=getSelectedChar();if(!char)return;if(confirm('Сбросить счётчик ключей?')){char.data.keysCount=0;saveState();renderVault()}});document.getElementById('addWorldBtn').addEventListener('click',()=>{const char=getSelectedChar();if(!char)return;const input=document.getElementById('worldActivityInput');const name=input.value.trim();if(!name)return;char.data.worldActivities.push({id:'w'+Date.now(),name,done:false});input.value='';saveState();renderVault()})}
-    function init(){if(window.Telegram&&window.Telegram.WebApp){window.Telegram.WebApp.ready();if(window.Telegram.WebApp.expand){window.Telegram.WebApp.expand()}}checkAndApplyWeeklyReset();renderCharSelect();renderVault();initCharHandlers();initConfigureHandlers();initVaultHandlers()}
+    function initVaultHandlers(){document.getElementById('updateRaiderBtn').addEventListener('click',updateFromRaiderIO);document.getElementById('configureBtn').addEventListener('click',openConfigureModal);document.getElementById('closeConfigureBtn').addEventListener('click',closeConfigureModal);document.getElementById('applyForCharBtn').addEventListener('click',()=>{const char=getSelectedChar();if(!char)return;char.settings={showRaid:document.getElementById('showRaidCheckbox').checked,showKeys:document.getElementById('showKeysCheckbox').checked,showWorld:document.getElementById('showWorldCheckbox').checked,showTasks:true,tasks:{showCapcake:document.getElementById('showCapcakeCheckbox').checked,showNeighbor:document.getElementById('showNeighborCheckbox').checked,showVendors:document.getElementById('showVendorsCheckbox').checked,showCrests:document.getElementById('showCrestsCheckbox').checked}};saveState();closeConfigureModal();renderVault()});document.getElementById('applyForAllBtn').addEventListener('click',()=>{const settings={showRaid:document.getElementById('showRaidCheckbox').checked,showKeys:document.getElementById('showKeysCheckbox').checked,showWorld:document.getElementById('showWorldCheckbox').checked,showTasks:true,tasks:{showCapcake:document.getElementById('showCapcakeCheckbox').checked,showNeighbor:document.getElementById('showNeighborCheckbox').checked,showVendors:document.getElementById('showVendorsCheckbox').checked,showCrests:document.getElementById('showCrestsCheckbox').checked}};state.characters.forEach(ch=>{ch.settings=settings});saveState();closeConfigureModal();renderVault()});document.getElementById('addKeyBtn').addEventListener('click',()=>{const char=getSelectedChar();if(!char)return;char.data.keysCount=Math.min(999,char.data.keysCount+1);saveState();renderVault()});document.getElementById('resetKeysBtn').addEventListener('click',()=>{const char=getSelectedChar();if(!char)return;if(confirm('Сбросить счётчик ключей?')){char.data.keysCount=0;saveState();renderVault()}});document.getElementById('addWorldBtn').addEventListener('click',()=>{const char=getSelectedChar();if(!char)return;const input=document.getElementById('worldActivityInput');const name=input.value.trim();if(!name)return;char.data.worldActivities.push({id:'w'+Date.now(),name,done:false});input.value='';saveState();renderVault()});document.getElementById('capcakeCheckbox').addEventListener('change',()=>{const char=getSelectedChar();if(!char)return;char.data.housing.capcake=document.getElementById('capcakeCheckbox').checked;saveState()});document.getElementById('neighborCheckbox').addEventListener('change',()=>{const char=getSelectedChar();if(!char)return;char.data.housing.neighbor=document.getElementById('neighborCheckbox').checked;saveState()});document.getElementById('vendorsCheckbox').addEventListener('change',()=>{const char=getSelectedChar();if(!char)return;char.data.housing.vendors=document.getElementById('vendorsCheckbox').checked;saveState()})}
+    function initProfessionsHandlers(){document.getElementById('addCharProfBtn').addEventListener('click',()=>{const input=document.getElementById('charNameInput');const name=input.value.trim();if(!name)return;state.characters.push({id:generateId(),name,realm:'manual',region:'eu',settings:defaultCharSettings(),data:defaultCharData()});input.value='';saveState();renderProfessions()});document.getElementById('addProfBtn').addEventListener('click',()=>{const input=document.getElementById('profNameInput');const name=input.value.trim();if(!name)return;const ch=state.characters.find(c=>c.id===state.selectedCharId);if(!ch)return;ch.data.professions.push({name,concentration:0,maxConcentration:100,rate:1});input.value='';saveState();renderProfessionsList()});document.getElementById('backToCharsBtn').addEventListener('click',()=>{state.selectedCharId=null;document.getElementById('professionsPanel').style.display='none';renderProfessions()})}
+    function initGoldHandlers(){const today=new Date();const iso=today.toISOString().slice(0,10);document.getElementById('orderDateInput').value=iso;document.getElementById('addOrderBtn').addEventListener('click',()=>{const orderId=document.getElementById('orderIdInput').value.trim();const amount=Number(document.getElementById('orderAmountInput').value);const date=document.getElementById('orderDateInput').value;const type=document.getElementById('orderTypeSelect').value;if(!orderId||!amount||!date){alert('Заполни ID, сумму и дату');return}const typeLabels={boost:'Буст',craft:'Крафт',farm:'Фарм',other:'Другое'};state.orders.push({id:'o'+Date.now(),orderId,amount,date,type,typeLabel:typeLabels[type]||type});document.getElementById('orderIdInput').value='';document.getElementById('orderAmountInput').value='';saveState();renderGold()});document.querySelectorAll('[data-period]').forEach(btn=>{btn.addEventListener('click',()=>{const period=btn.getAttribute('data-period');applyReportFilter(period)})})}
+    function init(){if(window.Telegram&&window.Telegram.WebApp){window.Telegram.WebApp.ready();if(window.Telegram.WebApp.expand){window.Telegram.WebApp.expand()}}checkAndApplyWeeklyReset();renderTabs();renderCharSelect();renderVault();initVaultHandlers();initProfessionsHandlers();initGoldHandlers()}
     init();
   </script>
 </body>
