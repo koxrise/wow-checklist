@@ -35,12 +35,12 @@
       max-width: 560px;
       margin: 0 auto;
       padding: 12px;
-      padding-bottom: 80px;
+      padding-bottom: 40px;
     }
 
     .header {
       text-align: center;
-      margin: 8px 0 16px;
+      margin: 8px 0 12px;
       border-bottom: 2px solid var(--wow-border);
       padding-bottom: 10px;
     }
@@ -60,40 +60,6 @@
       margin-top: 4px;
     }
 
-    .tabs {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 12px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-
-    .tab-btn {
-      flex: 1 1 auto;
-      min-width: 80px;
-      padding: 10px 8px;
-      border-radius: 8px;
-      border: 1px solid var(--wow-border);
-      background: linear-gradient(180deg, #1f2a40, #141b2a);
-      color: var(--wow-text);
-      font-weight: 700;
-      font-size: 13px;
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.08s ease, background 0.2s ease, border-color 0.2s ease;
-      white-space: nowrap;
-    }
-
-    .tab-btn.active {
-      background: linear-gradient(180deg, #2a3449, #1f2a40);
-      border-color: var(--wow-accent);
-      color: var(--wow-accent);
-    }
-
-    .tab-btn:active {
-      transform: translateY(1px);
-    }
-
     .panel {
       background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
       border: 1px solid var(--wow-border);
@@ -108,17 +74,6 @@
       font-weight: 700;
       color: var(--wow-accent);
       margin: 0 0 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .section {
-      display: none;
-    }
-
-    .section.active {
-      display: block;
     }
 
     .row {
@@ -144,7 +99,7 @@
     }
 
     .btn {
-      padding: 8px 12px;
+      padding: 9px 12px;
       border-radius: 7px;
       border: 1px solid var(--wow-border);
       background: linear-gradient(180deg, #1f2a40, #141b2a);
@@ -180,9 +135,9 @@
     }
 
     .btn.small {
-      padding: 5px 8px;
+      padding: 6px 9px;
       font-size: 12px;
-      min-width: 36px;
+      min-width: 38px;
     }
 
     input[type="text"],
@@ -267,10 +222,6 @@
       margin-top: 4px;
     }
 
-    .center {
-      text-align: center;
-    }
-
     .footer-note {
       font-size: 11px;
       color: var(--wow-muted);
@@ -278,7 +229,60 @@
       margin-top: 14px;
     }
 
-    .raider-status {
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 420px;
+      background: linear-gradient(180deg, #151c2b, #0f1420);
+      border: 1px solid var(--wow-border);
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--wow-accent);
+      margin: 0 0 10px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .modal-buttons .btn {
+      flex: 1 1 auto;
+    }
+
+    .char-select-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .char-select-row select {
+      flex: 1 1 auto;
+    }
+
+    .status {
       font-size: 11px;
       margin-top: 6px;
       padding: 6px 8px;
@@ -287,14 +291,18 @@
       background: rgba(255,255,255,0.03);
     }
 
-    .raider-status.success {
+    .status.success {
       border-color: var(--wow-success);
       color: #baffd9;
     }
 
-    .raider-status.error {
+    .status.error {
       border-color: var(--wow-danger);
       color: #ffb3b3;
+    }
+
+    .hidden {
+      display: none !important;
     }
   </style>
 </head>
@@ -302,37 +310,33 @@
   <div class="app">
     <div class="header">
       <h1 class="title">WoW Checklist</h1>
-      <div class="subtitle">Трекер активностей, профессий и заработка</div>
+      <div class="subtitle">Great Vault & Weekly Tracker</div>
     </div>
 
-    <!-- Вкладки -->
-    <div class="tabs">
-      <div class="tab-btn active" data-tab="vault">Vault & Weekly</div>
-      <div class="tab-btn" data-tab="professions">Профессии</div>
-      <div class="tab-btn" data-tab="tasks">Мои задачи</div>
-      <div class="tab-btn" data-tab="gold">Заработок</div>
-      <div class="tab-btn" data-tab="settings">Настройки</div>
-    </div>
-
-    <!-- Секция: Vault & Weekly -->
-    <div class="section active" id="vault">
-      <div class="panel">
-        <div class="panel-title">Raider.IO интеграция</div>
-        <div class="hint">Подтянуть рейды и ключи автоматически</div>
-
-        <div class="row">
-          <button class="btn primary" id="updateRaiderBtn" style="width:100%;">Обновить из Raider.IO</button>
-        </div>
-        <div id="raiderStatus" class="raider-status" style="display:none;"></div>
+    <!-- Выбор персонажа -->
+    <div class="panel">
+      <div class="panel-title">Персонаж</div>
+      <div class="char-select-row">
+        <select id="charSelect"></select>
+        <button class="btn small primary" id="addCharBtn">+ Персонаж</button>
       </div>
+      <div class="row">
+        <button class="btn primary" id="updateRaiderBtn" style="width:100%;">Обновить из Raider.IO</button>
+      </div>
+      <div class="row">
+        <button class="btn" id="configureBtn" style="width:100%;">Настроить отображение</button>
+      </div>
+      <div id="raiderStatus" class="status" style="display:none;"></div>
+    </div>
+
+    <!-- Great Vault -->
+    <div class="panel" id="vaultPanel">
+      <div class="panel-title">Great Vault</div>
 
       <!-- Рейды -->
-      <div class="panel">
-        <div class="panel-title">Рейды (Великое хранилище)</div>
-        <div class="hint">Отметь убитых боссов актуального сезона</div>
-
+      <div id="raidSection">
+        <div class="panel-title" style="font-size:14px; margin-top:10px;">Рейды</div>
         <div id="raidBossesList"></div>
-
         <div class="progress-wrap">
           <div class="progress-bar">
             <div class="progress-fill" id="raidProgressFill"></div>
@@ -342,11 +346,12 @@
             <span id="raidProgressText">0 / 0</span>
           </div>
         </div>
+        <div class="divider"></div>
       </div>
 
       <!-- Ключи -->
-      <div class="panel">
-        <div class="panel-title">Ключи 10+ (M+)</div>
+      <div id="keysSection">
+        <div class="panel-title" style="font-size:14px; margin-top:10px;">Ключи 10+ (M+)</div>
         <div class="row">
           <div class="label">
             <div>Ключей 10+ за неделю</div>
@@ -363,16 +368,16 @@
             <span id="keysProgressText">0 / 8</span>
           </div>
         </div>
-        <div class="hint">Нажимай «+1» каждый раз, когда проходишь ключ 10+</div>
+        <div class="divider"></div>
       </div>
 
       <!-- World -->
-      <div class="panel">
-        <div class="panel-title">World активности</div>
+      <div id="worldSection">
+        <div class="panel-title" style="font-size:14px; margin-top:10px;">World активности</div>
         <div class="hint">Delves, Prey Hunts, локальные события и т. п.</div>
 
         <div class="row">
-          <input type="text" id="worldActivityInput" placeholder="Название активности (например, Delve T8)" />
+          <input type="text" id="worldActivityInput" placeholder="Название активности" />
           <button class="btn small primary" id="addWorldBtn">Добавить</button>
         </div>
 
@@ -390,168 +395,74 @@
       </div>
     </div>
 
-    <!-- Секция: Профессии -->
-    <div class="section" id="professions">
-      <div class="panel">
-        <div class="panel-title">Персонажи</div>
-        <div class="row">
-          <input type="text" id="charNameInput" placeholder="Имя персонажа" />
-          <button class="btn small primary" id="addCharBtn">Добавить</button>
-        </div>
-        <div id="charactersList" style="margin-top:8px;"></div>
-      </div>
-
-      <div class="panel" id="professionsPanel" style="display:none;">
-        <div class="panel-title">
-          <span id="selectedCharName"></span> — профессии
-        </div>
-        <div class="row">
-          <input type="text" id="profNameInput" placeholder="Название профессии (например, Alchemy)" />
-          <button class="btn small primary" id="addProfBtn">Добавить</button>
-        </div>
-        <div id="professionsList" style="margin-top:8px;"></div>
-        <button class="btn small" id="backToCharsBtn" style="margin-top:10px;">← Назад к персонажам</button>
-      </div>
-    </div>
-
-    <!-- Секция: Мои задачи -->
-    <div class="section" id="tasks">
-      <div class="panel">
-        <div class="panel-title">Персональные задачи</div>
-        <div class="hint">Хаузинг, капы, проверки торговцев и т. п.</div>
-
-        <div class="row wrap">
-          <input type="text" id="taskNameInput" placeholder="Название задачи" style="flex:1 1 180px;" />
-          <select id="taskPeriodSelect" style="flex:1 1 120px;">
-            <option value="weekly">Еженедельно</option>
-            <option value="monthly">Ежемесячно</option>
-            <option value="manual">Вручную</option>
-          </select>
-          <button class="btn small primary" id="addTaskBtn">Добавить</button>
-        </div>
-
-        <div id="tasksList" style="margin-top:8px;"></div>
-      </div>
-    </div>
-
-    <!-- Секция: Заработок -->
-    <div class="section" id="gold">
-      <div class="panel">
-        <div class="panel-title">Добавить заказ</div>
-        <div class="row">
-          <input type="text" id="orderIdInput" placeholder="ID заказа (например, #123)" />
-        </div>
-        <div class="row">
-          <input type="number" id="orderAmountInput" placeholder="Сумма (голда)" />
-        </div>
-        <div class="row">
-          <input type="date" id="orderDateInput" />
-        </div>
-        <div class="row">
-          <select id="orderTypeSelect">
-            <option value="boost">Буст</option>
-            <option value="craft">Крафт</option>
-            <option value="farm">Фарм</option>
-            <option value="other">Другое</option>
-          </select>
-        </div>
-        <button class="btn primary" id="addOrderBtn" style="width:100%;">Добавить заказ</button>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title">Отчёт по периоду</div>
-        <div class="row">
-          <button class="btn small" data-period="7d">7 дней</button>
-          <button class="btn small" data-period="30d">30 дней</button>
-          <button class="btn small" data-period="all">Всё время</button>
-        </div>
-        <div class="divider"></div>
-        <div class="row">
-          <div class="label">Сумма:</div>
-          <div class="label" id="reportSum" style="text-align:right; font-weight:700;">0</div>
-        </div>
-        <div class="row">
-          <div class="label">Заказов:</div>
-          <div class="label" id="reportCount" style="text-align:right;">0</div>
-        </div>
-        <div class="row">
-          <div class="label">Среднее:</div>
-          <div class="label" id="reportAvg" style="text-align:right;">0</div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title">Последние заказы</div>
-        <div id="ordersList"></div>
-      </div>
-    </div>
-
-    <!-- Секция: Настройки -->
-    <div class="section" id="settings">
-      <div class="panel">
-        <div class="panel-title">Недельный ресет</div>
-        <div class="row">
-          <div class="label">День ресета</div>
-          <select id="resetDaySelect">
-            <option value="1">Понедельник</option>
-            <option value="2">Вторник</option>
-            <option value="3">Среда</option>
-            <option value="4">Четверг</option>
-            <option value="5">Пятница</option>
-            <option value="6">Суббота</option>
-            <option value="0">Воскресенье</option>
-          </select>
-        </div>
-        <div class="row">
-          <div class="label">Время ресета</div>
-          <input type="time" id="resetTimeInput" />
-        </div>
-        <div class="hint">Используется для сброса недельных активностей и расчёта напоминаний</div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title">Raider.IO настройки</div>
-        <div class="row">
-          <input type="text" id="raiderRegionInput" placeholder="Регион (eu, us)" />
-        </div>
-        <div class="row">
-          <input type="text" id="raiderRealmInput" placeholder="Сервер (например, draenor)" />
-        </div>
-        <div class="row">
-          <input type="text" id="raiderNameInput" placeholder="Имя персонажа" />
-        </div>
-        <div class="hint">
-          Эти данные будут использоваться для подтягивания рейдов и ключей через Raider.IO API.
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title">Напоминания (в разработке)</div>
-        <div class="hint">
-          В следующей версии здесь можно будет включить уведомления от бота:
-          «До ресета осталось X часов, у тебя не закрыто: …».
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title">Данные</div>
-        <button class="btn danger" id="resetAllDataBtn" style="width:100%;">Сбросить все данные</button>
-        <div class="hint">Это удалит всех персонажей, задачи, заказы и прогресс</div>
-      </div>
-    </div>
-
     <div class="footer-note">
-      WoW Checklist • Тестовая версия (localStorage + Raider.IO)
+      WoW Checklist • Все данные сохраняются локально
+    </div>
+  </div>
+
+  <!-- Модалка: Добавить персонажа -->
+  <div class="modal-overlay" id="addCharModal">
+    <div class="modal">
+      <div class="modal-title">Добавить персонажа</div>
+      <div class="row">
+        <input type="text" id="newCharNameInput" placeholder="Имя персонажа" />
+      </div>
+      <div class="row">
+        <input type="text" id="newCharRealmInput" placeholder="Сервер (например, draenor)" />
+      </div>
+      <div class="row">
+        <input type="text" id="newCharRegionInput" placeholder="Регион (eu, us)" value="eu" />
+      </div>
+      <div class="modal-buttons">
+        <button class="btn" id="cancelAddCharBtn">Отмена</button>
+        <button class="btn primary" id="saveAddCharBtn">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модалка: Настроить отображение -->
+  <div class="modal-overlay" id="configureModal">
+    <div class="modal">
+      <div class="modal-title">Настроить отображение</div>
+      <div class="hint" style="margin-bottom:8px;">
+        Отметь, что показывать в Great Vault
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="showRaidCheckbox" />
+        <label for="showRaidCheckbox" class="label">Рейды</label>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="showKeysCheckbox" />
+        <label for="showKeysCheckbox" class="label">Ключи 10+</label>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="showWorldCheckbox" />
+        <label for="showWorldCheckbox" class="label">World активности</label>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row">
+        <button class="btn small" id="applyForCharBtn">Для этого персонажа</button>
+        <button class="btn small primary" id="applyForAllBtn">Для всех персонажей</button>
+      </div>
+
+      <div class="modal-buttons">
+        <button class="btn" id="closeConfigureBtn">Закрыть</button>
+      </div>
     </div>
   </div>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
     // =====================
-    // Утилиты и хранилище
+    // Хранилище и состояние
     // =====================
 
-    const STORAGE_KEY = 'wowChecklistDataV2';
+    const STORAGE_KEY = 'wowChecklistV3';
 
     function loadState() {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -571,16 +482,27 @@
 
     function defaultState() {
       return {
-        resetDay: 3, // 3 = среда
+        characters: [], // {id, name, realm, region, settings, data}
+        selectedCharId: null,
+        lastResetTimestamp: null,
+        resetDay: 3, // среда
         resetHour: 9,
         resetMinute: 0,
+      };
+    }
 
-        // Raider.IO настройки
-        raiderRegion: 'eu',
-        raiderRealm: 'draenor',
-        raiderName: '',
+    let state = loadState();
 
-        // Рейды: список боссов
+    // =====================
+    // Утилиты
+    // =====================
+
+    function generateId() {
+      return 'id_' + Math.random().toString(36).slice(2, 10);
+    }
+
+    function defaultCharData() {
+      return {
         raidBosses: [
           { id: 'b1', name: 'Немриса (Грот)', done: false, difficulty: 'normal' },
           { id: 'b2', name: 'Venomous Abyss — Босс 1', done: false, difficulty: 'normal' },
@@ -589,29 +511,22 @@
           { id: 'b5', name: 'Venomous Abyss — Босс 4', done: false, difficulty: 'normal' },
           { id: 'b6', name: 'Venomous Abyss — Босс 5', done: false, difficulty: 'normal' },
         ],
-
-        // Ключи
         keysCount: 0,
-
-        // World активности
         worldActivities: [],
-
-        // Персонажи и профессии
-        characters: [],
-        selectedCharId: null,
-
-        // Персональные задачи
-        tasks: [],
-
-        // Заказы
-        orders: [],
-
-        // Последняя дата сброса (timestamp)
-        lastResetTimestamp: null,
       };
     }
 
-    let state = loadState();
+    function defaultCharSettings() {
+      return {
+        showRaid: true,
+        showKeys: true,
+        showWorld: true,
+      };
+    }
+
+    function getSelectedChar() {
+      return state.characters.find(c => c.id === state.selectedCharId);
+    }
 
     // =====================
     // Сброс по ресету
@@ -637,11 +552,10 @@
       if (!state.lastResetTimestamp || lastResetTs > state.lastResetTimestamp) {
         state.lastResetTimestamp = lastResetTs;
 
-        state.raidBosses.forEach(b => { b.done = false; });
-        state.keysCount = 0;
-        state.worldActivities = [];
-        state.tasks.forEach(t => {
-          if (t.period === 'weekly') t.done = false;
+        state.characters.forEach(ch => {
+          ch.data.raidBosses.forEach(b => { b.done = false; });
+          ch.data.keysCount = 0;
+          ch.data.worldActivities = [];
         });
 
         saveState();
@@ -649,44 +563,79 @@
     }
 
     // =====================
-    // Отрисовка вкладок
+    // Отрисовка
     // =====================
 
-    function initTabs() {
-      const tabs = document.querySelectorAll('.tab-btn');
-      tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          tabs.forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
+    function renderCharSelect() {
+      const select = document.getElementById('charSelect');
+      select.innerHTML = '';
 
-          const target = tab.getAttribute('data-tab');
-          document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-          document.getElementById(target).classList.add('active');
-
-          if (target === 'vault') renderVault();
-          if (target === 'professions') renderProfessions();
-          if (target === 'tasks') renderTasks();
-          if (target === 'gold') renderGold();
-          if (target === 'settings') renderSettings();
+      if (state.characters.length === 0) {
+        const opt = document.createElement('option');
+        opt.textContent = 'Нет персонажей';
+        opt.disabled = true;
+        select.appendChild(opt);
+        state.selectedCharId = null;
+      } else {
+        state.characters.forEach(ch => {
+          const opt = document.createElement('option');
+          opt.value = ch.id;
+          opt.textContent = `${ch.name} (${ch.realm})`;
+          select.appendChild(opt);
         });
-      });
+
+        if (!state.selectedCharId && state.characters.length > 0) {
+          state.selectedCharId = state.characters[0].id;
+        }
+
+        select.value = state.selectedCharId || '';
+      }
+
+      updateButtonsVisibility();
     }
 
-    // =====================
-    // Vault & Weekly
-    // =====================
+    function updateButtonsVisibility() {
+      const char = getSelectedChar();
+      const updateBtn = document.getElementById('updateRaiderBtn');
+      const configureBtn = document.getElementById('configureBtn');
+
+      if (char) {
+        updateBtn.classList.remove('hidden');
+        configureBtn.classList.remove('hidden');
+      } else {
+        updateBtn.classList.add('hidden');
+        configureBtn.classList.add('hidden');
+      }
+    }
 
     function renderVault() {
-      renderRaidBosses();
-      renderKeys();
-      renderWorld();
+      const char = getSelectedChar();
+      if (!char) {
+        document.getElementById('vaultPanel').innerHTML = '<div class="hint">Добавьте персонажа, чтобы видеть прогресс</div>';
+        return;
+      }
+
+      const settings = char.settings || defaultCharSettings();
+      const data = char.data || defaultCharData();
+
+      // Показывать/скрывать секции
+      document.getElementById('raidSection').style.display = settings.showRaid ? 'block' : 'none';
+      document.getElementById('keysSection').style.display = settings.showKeys ? 'block' : 'none';
+      document.getElementById('worldSection').style.display = settings.showWorld ? 'block' : 'none';
+
+      // Рейды
+      renderRaidBosses(data);
+      // Ключи
+      renderKeys(data);
+      // World
+      renderWorld(data);
     }
 
-    function renderRaidBosses() {
+    function renderRaidBosses(data) {
       const container = document.getElementById('raidBossesList');
       container.innerHTML = '';
 
-      state.raidBosses.forEach((boss, idx) => {
+      data.raidBosses.forEach((boss, idx) => {
         const row = document.createElement('div');
         row.className = 'checkbox-row';
 
@@ -694,9 +643,10 @@
         cb.type = 'checkbox';
         cb.checked = boss.done;
         cb.addEventListener('change', () => {
-          state.raidBosses[idx].done = cb.checked;
+          const char = getSelectedChar();
+          char.data.raidBosses[idx].done = cb.checked;
           saveState();
-          renderRaidBosses();
+          renderRaidBosses(char.data);
         });
 
         const label = document.createElement('div');
@@ -717,7 +667,8 @@
         });
         diffSelect.value = boss.difficulty;
         diffSelect.addEventListener('change', () => {
-          state.raidBosses[idx].difficulty = diffSelect.value;
+          const char = getSelectedChar();
+          char.data.raidBosses[idx].difficulty = diffSelect.value;
           saveState();
         });
 
@@ -727,16 +678,16 @@
         container.appendChild(row);
       });
 
-      const doneCount = state.raidBosses.filter(b => b.done).length;
-      const total = state.raidBosses.length;
+      const doneCount = data.raidBosses.filter(b => b.done).length;
+      const total = data.raidBosses.length;
 
       const fillPct = total ? (doneCount / total) * 100 : 0;
       document.getElementById('raidProgressFill').style.width = fillPct + '%';
       document.getElementById('raidProgressText').textContent = `${doneCount} / ${total}`;
     }
 
-    function renderKeys() {
-      const done = state.keysCount;
+    function renderKeys(data) {
+      const done = data.keysCount;
       const target = 8;
       const fillPct = Math.min(100, (done / target) * 100);
 
@@ -744,11 +695,11 @@
       document.getElementById('keysProgressText').textContent = `${done} / ${target}`;
     }
 
-    function renderWorld() {
+    function renderWorld(data) {
       const container = document.getElementById('worldActivitiesList');
       container.innerHTML = '';
 
-      state.worldActivities.forEach((act, idx) => {
+      data.worldActivities.forEach((act, idx) => {
         const row = document.createElement('div');
         row.className = 'checkbox-row';
 
@@ -756,9 +707,10 @@
         cb.type = 'checkbox';
         cb.checked = act.done;
         cb.addEventListener('change', () => {
-          state.worldActivities[idx].done = cb.checked;
+          const char = getSelectedChar();
+          char.data.worldActivities[idx].done = cb.checked;
           saveState();
-          renderWorld();
+          renderWorld(char.data);
         });
 
         const label = document.createElement('div');
@@ -769,9 +721,10 @@
         delBtn.className = 'btn small danger';
         delBtn.textContent = '×';
         delBtn.addEventListener('click', () => {
-          state.worldActivities.splice(idx, 1);
+          const char = getSelectedChar();
+          char.data.worldActivities.splice(idx, 1);
           saveState();
-          renderWorld();
+          renderWorld(char.data);
         });
 
         row.appendChild(cb);
@@ -780,7 +733,7 @@
         container.appendChild(row);
       });
 
-      const doneCount = state.worldActivities.filter(a => a.done).length;
+      const doneCount = data.worldActivities.filter(a => a.done).length;
       const target = 8;
       const fillPct = Math.min(100, (doneCount / target) * 100);
 
@@ -789,323 +742,45 @@
     }
 
     // =====================
-    // Профессии
+    // Модалки
     // =====================
 
-    function renderProfessions() {
-      const charsContainer = document.getElementById('charactersList');
-      const professionsPanel = document.getElementById('professionsPanel');
-      const professionsList = document.getElementById('professionsList');
-      const selectedCharNameEl = document.getElementById('selectedCharName');
-
-      charsContainer.innerHTML = '';
-
-      state.characters.forEach((ch, idx) => {
-        const row = document.createElement('div');
-        row.className = 'checkbox-row';
-
-        const label = document.createElement('div');
-        label.style.flex = '1 1 auto';
-        label.textContent = ch.name;
-
-        const delBtn = document.createElement('button');
-        delBtn.className = 'btn small danger';
-        delBtn.textContent = '×';
-        delBtn.addEventListener('click', () => {
-          state.characters.splice(idx, 1);
-          if (state.selectedCharId === ch.id) {
-            state.selectedCharId = null;
-            professionsPanel.style.display = 'none';
-          }
-          saveState();
-          renderProfessions();
-        });
-
-        const openBtn = document.createElement('button');
-        openBtn.className = 'btn small';
-        openBtn.textContent = 'Открыть';
-        openBtn.addEventListener('click', () => {
-          state.selectedCharId = ch.id;
-          professionsPanel.style.display = 'block';
-          selectedCharNameEl.textContent = ch.name;
-          renderProfessionsList();
-        });
-
-        row.appendChild(label);
-        row.appendChild(openBtn);
-        row.appendChild(delBtn);
-        charsContainer.appendChild(row);
-      });
-
-      if (state.selectedCharId) {
-        professionsPanel.style.display = 'block';
-        const ch = state.characters.find(c => c.id === state.selectedCharId);
-        if (ch) {
-          selectedCharNameEl.textContent = ch.name;
-          renderProfessionsList();
-        }
-      } else {
-        professionsPanel.style.display = 'none';
-      }
+    function openAddCharModal() {
+      document.getElementById('addCharModal').classList.add('active');
+      document.getElementById('newCharNameInput').value = '';
+      document.getElementById('newCharRealmInput').value = '';
+      document.getElementById('newCharRegionInput').value = 'eu';
     }
 
-    function renderProfessionsList() {
-      const container = document.getElementById('professionsList');
-      container.innerHTML = '';
+    function closeAddCharModal() {
+      document.getElementById('addCharModal').classList.remove('active');
+    }
 
-      const ch = state.characters.find(c => c.id === state.selectedCharId);
-      if (!ch) return;
+    function openConfigureModal() {
+      const char = getSelectedChar();
+      if (!char) return;
 
-      ch.professions = ch.professions || [];
+      const settings = char.settings || defaultCharSettings();
 
-      ch.professions.forEach((prof, idx) => {
-        const wrap = document.createElement('div');
-        wrap.style.marginBottom = '12px';
-        wrap.style.border = '1px solid var(--wow-border)';
-        wrap.style.borderRadius = '8px';
-        wrap.style.padding = '8px';
+      document.getElementById('showRaidCheckbox').checked = settings.showRaid;
+      document.getElementById('showKeysCheckbox').checked = settings.showKeys;
+      document.getElementById('showWorldCheckbox').checked = settings.showWorld;
 
-        const header = document.createElement('div');
-        header.style.display = 'flex';
-        header.style.alignItems = 'center';
-        header.style.gap = '8px';
-        header.style.marginBottom = '6px';
+      document.getElementById('configureModal').classList.add('active');
+    }
 
-        const nameEl = document.createElement('div');
-        nameEl.style.flex = '1 1 auto';
-        nameEl.style.fontWeight = '700';
-        nameEl.textContent = prof.name;
-
-        const delBtn = document.createElement('button');
-        delBtn.className = 'btn small danger';
-        delBtn.textContent = '×';
-        delBtn.addEventListener('click', () => {
-          ch.professions.splice(idx, 1);
-          saveState();
-          renderProfessionsList();
-        });
-
-        header.appendChild(nameEl);
-        header.appendChild(delBtn);
-
-        const maxConc = prof.maxConcentration || 100;
-        const currentConc = Math.min(maxConc, prof.concentration || 0);
-        const rate = prof.rate || 1;
-
-        const barWrap = document.createElement('div');
-        barWrap.className = 'progress-wrap';
-
-        const bar = document.createElement('div');
-        bar.className = 'progress-bar';
-        const fill = document.createElement('div');
-        fill.className = 'progress-fill';
-        const fillPct = maxConc ? (currentConc / maxConc) * 100 : 0;
-        fill.style.width = fillPct + '%';
-        bar.appendChild(fill);
-
-        const text = document.createElement('div');
-        text.className = 'progress-text';
-        const minutesToMax = maxConc && rate ? Math.ceil((maxConc - currentConc) / rate) : 0;
-        text.textContent = `${currentConc} / ${maxConc} • до макс. ~${minutesToMax} мин`;
-
-        barWrap.appendChild(bar);
-        barWrap.appendChild(text);
-
-        const btnRow = document.createElement('div');
-        btnRow.className = 'row';
-        btnRow.style.marginTop = '6px';
-
-        [10, 20, 50].forEach(val => {
-          const btn = document.createElement('button');
-          btn.className = 'btn small';
-          btn.textContent = `−${val}`;
-          btn.addEventListener('click', () => {
-            prof.concentration = Math.max(0, (prof.concentration || 0) - val);
-            saveState();
-            renderProfessionsList();
-          });
-          btnRow.appendChild(btn);
-        });
-
-        const editBtn = document.createElement('button');
-        editBtn.className = 'btn small';
-        editBtn.textContent = 'Изменить';
-        editBtn.addEventListener('click', () => {
-          const newConc = prompt('Текущая концентрация:', prof.concentration || 0);
-          const newMax = prompt('Максимум концентрации:', prof.maxConcentration || 100);
-          const newRate = prompt('Скорость восстановления (ед./мин):', prof.rate || 1);
-
-          if (newConc !== null) prof.concentration = Number(newConc);
-          if (newMax !== null) prof.maxConcentration = Number(newMax);
-          if (newRate !== null) prof.rate = Number(newRate);
-
-          saveState();
-          renderProfessionsList();
-        });
-
-        btnRow.appendChild(editBtn);
-
-        wrap.appendChild(header);
-        wrap.appendChild(barWrap);
-        wrap.appendChild(btnRow);
-        container.appendChild(wrap);
-      });
-
-      const now = Date.now();
-      if (!ch.lastConcUpdate) {
-        ch.lastConcUpdate = now;
-      } else {
-        const dtMin = (now - ch.lastConcUpdate) / 60000;
-        ch.professions.forEach(p => {
-          if (p.rate) {
-            const gain = Math.floor(dtMin * p.rate);
-            if (gain > 0) {
-              p.concentration = Math.min(p.maxConcentration || 100, (p.concentration || 0) + gain);
-            }
-          }
-        });
-        ch.lastConcUpdate = now;
-        saveState();
-      }
+    function closeConfigureModal() {
+      document.getElementById('configureModal').classList.remove('active');
     }
 
     // =====================
-    // Мои задачи
-    // =====================
-
-    function renderTasks() {
-      const container = document.getElementById('tasksList');
-      container.innerHTML = '';
-
-      state.tasks.forEach((task, idx) => {
-        const row = document.createElement('div');
-        row.className = 'checkbox-row';
-
-        const cb = document.createElement('input');
-        cb.type = 'checkbox';
-        cb.checked = task.done;
-        cb.addEventListener('change', () => {
-          state.tasks[idx].done = cb.checked;
-          saveState();
-        });
-
-        const label = document.createElement('div');
-        label.style.flex = '1 1 auto';
-        label.innerHTML = `
-          <div style="font-weight:600;">${task.name}</div>
-          <div class="muted">${task.period === 'weekly' ? 'Еженедельно' : task.period === 'monthly' ? 'Ежемесячно' : 'Вручную'}</div>
-        `;
-
-        const delBtn = document.createElement('button');
-        delBtn.className = 'btn small danger';
-        delBtn.textContent = '×';
-        delBtn.addEventListener('click', () => {
-          state.tasks.splice(idx, 1);
-          saveState();
-          renderTasks();
-        });
-
-        row.appendChild(cb);
-        row.appendChild(label);
-        row.appendChild(delBtn);
-        container.appendChild(row);
-      });
-    }
-
-    // =====================
-    // Заработок
-    // =====================
-
-    function renderGold() {
-      const container = document.getElementById('ordersList');
-      container.innerHTML = '';
-
-      const sorted = [...state.orders].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-      sorted.forEach((order, idx) => {
-        const row = document.createElement('div');
-        row.className = 'checkbox-row';
-
-        const info = document.createElement('div');
-        info.style.flex = '1 1 auto';
-        info.innerHTML = `
-          <div style="font-weight:600;">${order.orderId} • ${formatDate(order.date)}</div>
-          <div class="muted">${order.typeLabel} • ${order.amount} голды</div>
-        `;
-
-        const delBtn = document.createElement('button');
-        delBtn.className = 'btn small danger';
-        delBtn.textContent = '×';
-        delBtn.addEventListener('click', () => {
-          const realIdx = state.orders.findIndex(o => o.id === order.id);
-          if (realIdx >= 0) {
-            state.orders.splice(realIdx, 1);
-            saveState();
-            renderGold();
-          }
-        });
-
-        row.appendChild(info);
-        row.appendChild(delBtn);
-        container.appendChild(row);
-      });
-
-      applyReportFilter('all');
-    }
-
-    function formatDate(iso) {
-      const d = new Date(iso);
-      const day = String(d.getDate()).padStart(2, '0');
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const year = d.getFullYear();
-      return `${day}.${month}.${year}`;
-    }
-
-    function applyReportFilter(period) {
-      const now = new Date();
-      let start = new Date(0);
-
-      if (period === '7d') {
-        start = new Date(now);
-        start.setDate(now.getDate() - 7);
-      } else if (period === '30d') {
-        start = new Date(now);
-        start.setDate(now.getDate() - 30);
-      }
-
-      const filtered = state.orders.filter(o => new Date(o.date) >= start);
-
-      const sum = filtered.reduce((s, o) => s + o.amount, 0);
-      const count = filtered.length;
-      const avg = count ? Math.round(sum / count) : 0;
-
-      document.getElementById('reportSum').textContent = sum;
-      document.getElementById('reportCount').textContent = count;
-      document.getElementById('reportAvg').textContent = avg;
-    }
-
-    // =====================
-    // Настройки
-    // =====================
-
-    function renderSettings() {
-      document.getElementById('resetDaySelect').value = String(state.resetDay);
-      document.getElementById('resetTimeInput').value =
-        String(state.resetHour).padStart(2, '0') + ':' + String(state.resetMinute).padStart(2, '0');
-
-      document.getElementById('raiderRegionInput').value = state.raiderRegion || 'eu';
-      document.getElementById('raiderRealmInput').value = state.raiderRealm || '';
-      document.getElementById('raiderNameInput').value = state.raiderName || '';
-    }
-
-    // =====================
-    // Raider.IO интеграция
+    // Raider.IO
     // =====================
 
     function showRaiderStatus(message, type) {
       const el = document.getElementById('raiderStatus');
       el.textContent = message;
-      el.className = 'raider-status ' + (type === 'success' ? 'success' : 'error');
+      el.className = 'status ' + (type === 'success' ? 'success' : 'error');
       el.style.display = 'block';
       setTimeout(() => {
         el.style.display = 'none';
@@ -1113,20 +788,15 @@
     }
 
     async function updateFromRaiderIO() {
-      const region = (document.getElementById('raiderRegionInput').value || 'eu').trim().toLowerCase();
-      const realm = document.getElementById('raiderRealmInput').value.trim().toLowerCase();
-      const name = document.getElementById('raiderNameInput').value.trim();
-
-      if (!realm || !name) {
-        showRaiderStatus('Заполни сервер и имя персонажа в настройках Raider.IO', 'error');
+      const char = getSelectedChar();
+      if (!char) {
+        showRaiderStatus('Выберите или добавьте персонажа', 'error');
         return;
       }
 
-      // Сохраняем настройки
-      state.raiderRegion = region;
-      state.raiderRealm = realm;
-      state.raiderName = name;
-      saveState();
+      const region = char.region || 'eu';
+      const realm = char.realm;
+      const name = char.name;
 
       showRaiderStatus('Загрузка данных из Raider.IO...', 'error');
 
@@ -1139,237 +809,155 @@
         }
         const data = await res.json();
 
-        // Обновляем рейды
+        // Рейды
         if (data.raid_progression) {
-          // Пример структуры: raid_progression["Nymrissa Wavecaller"] = { normal: { bosses_defeated: 5 }, heroic: {...}, mythic: {...} }
-          // Мы упрощённо: если есть любой прогресс по боссу — ставим done = true
-          // Т.к. у нас список боссов фиксированный, сделаем маппинг по названию
-
-          const raidName = 'Nymrissa Wavecaller'; // актуальный рейд
+          const raidName = 'Nymrissa Wavecaller';
           const rp = data.raid_progression[raidName];
 
           if (rp) {
-            // Для простоты: если есть normal и bosses_defeated > 0 — считаем, что первый босс убит, и т.д.
-            // Это упрощение; в идеале нужен точный маппинг боссов.
-
             const normalDefeated = rp.normal?.bosses_defeated || 0;
             const heroicDefeated = rp.heroic?.bosses_defeated || 0;
             const mythicDefeated = rp.mythic?.bosses_defeated || 0;
-
-            // У нас 6 боссов: Немриса + 5 боссов Venomous Abyss
-            // Для демонстрации: ставим done по количеству defeated в normal
             const totalDefeated = Math.max(normalDefeated, heroicDefeated, mythicDefeated);
 
-            for (let i = 0; i < Math.min(totalDefeated, state.raidBosses.length); i++) {
-              state.raidBosses[i].done = true;
+            for (let i = 0; i < Math.min(totalDefeated, char.data.raidBosses.length); i++) {
+              char.data.raidBosses[i].done = true;
             }
           }
         }
 
-        // Обновляем ключи
+        // Ключи
         if (data.mythic_plus_recent_runs && Array.isArray(data.mythic_plus_recent_runs)) {
-          // Считаем ключи 10+
           const keys10plus = data.mythic_plus_recent_runs.filter(run => (run.mythic_level || 0) >= 10).length;
-          state.keysCount = keys10plus;
+          char.data.keysCount = keys10plus;
         }
 
         saveState();
         renderVault();
-        showRaiderStatus('Данные обновлены: рейды и ключи подтянуты', 'success');
+        showRaiderStatus('Данные обновлены', 'success');
       } catch (err) {
         console.error(err);
-        showRaiderStatus('Не удалось загрузить данные. Проверь регион/сервер/имя и попробуй ещё раз.', 'error');
+        showRaiderStatus('Не удалось загрузить данные. Проверь регион/сервер/имя.', 'error');
       }
     }
 
     // =====================
-    // Обработчики кнопок
+    // Обработчики
     // =====================
 
-    function initVaultHandlers() {
-      document.getElementById('updateRaiderBtn').addEventListener('click', updateFromRaiderIO);
-
-      document.getElementById('addKeyBtn').addEventListener('click', () => {
-        state.keysCount = Math.min(999, state.keysCount + 1);
+    function initCharHandlers() {
+      const select = document.getElementById('charSelect');
+      select.addEventListener('change', () => {
+        state.selectedCharId = select.value || null;
         saveState();
-        renderKeys();
+        renderVault();
+      });
+
+      document.getElementById('addCharBtn').addEventListener('click', openAddCharModal);
+      document.getElementById('cancelAddCharBtn').addEventListener('click', closeAddCharModal);
+
+      document.getElementById('saveAddCharBtn').addEventListener('click', () => {
+        const name = document.getElementById('newCharNameInput').value.trim();
+        const realm = document.getElementById('newCharRealmInput').value.trim();
+        const region = (document.getElementById('newCharRegionInput').value.trim() || 'eu').toLowerCase();
+
+        if (!name || !realm) {
+          alert('Введи имя и сервер');
+          return;
+        }
+
+        const newChar = {
+          id: generateId(),
+          name,
+          realm,
+          region,
+          settings: defaultCharSettings(),
+          data: defaultCharData(),
+        };
+
+        state.characters.push(newChar);
+        state.selectedCharId = newChar.id;
+        saveState();
+
+        closeAddCharModal();
+        renderCharSelect();
+        renderVault();
+      });
+
+      document.getElementById('updateRaiderBtn').addEventListener('click', updateFromRaiderIO);
+    }
+
+    function initConfigureHandlers() {
+      document.getElementById('configureBtn').addEventListener('click', openConfigureModal);
+      document.getElementById('closeConfigureBtn').addEventListener('click', closeConfigureModal);
+
+      document.getElementById('applyForCharBtn').addEventListener('click', () => {
+        const char = getSelectedChar();
+        if (!char) return;
+
+        char.settings = {
+          showRaid: document.getElementById('showRaidCheckbox').checked,
+          showKeys: document.getElementById('showKeysCheckbox').checked,
+          showWorld: document.getElementById('showWorldCheckbox').checked,
+        };
+
+        saveState();
+        closeConfigureModal();
+        renderVault();
+      });
+
+      document.getElementById('applyForAllBtn').addEventListener('click', () => {
+        const settings = {
+          showRaid: document.getElementById('showRaidCheckbox').checked,
+          showKeys: document.getElementById('showKeysCheckbox').checked,
+          showWorld: document.getElementById('showWorldCheckbox').checked,
+        };
+
+        state.characters.forEach(ch => {
+          ch.settings = settings;
+        });
+
+        saveState();
+        closeConfigureModal();
+        renderVault();
+      });
+    }
+
+    function initVaultHandlers() {
+      document.getElementById('addKeyBtn').addEventListener('click', () => {
+        const char = getSelectedChar();
+        if (!char) return;
+        char.data.keysCount = Math.min(999, char.data.keysCount + 1);
+        saveState();
+        renderVault();
       });
 
       document.getElementById('resetKeysBtn').addEventListener('click', () => {
+        const char = getSelectedChar();
+        if (!char) return;
         if (confirm('Сбросить счётчик ключей?')) {
-          state.keysCount = 0;
+          char.data.keysCount = 0;
           saveState();
-          renderKeys();
+          renderVault();
         }
       });
 
       document.getElementById('addWorldBtn').addEventListener('click', () => {
+        const char = getSelectedChar();
+        if (!char) return;
         const input = document.getElementById('worldActivityInput');
         const name = input.value.trim();
         if (!name) return;
-        state.worldActivities.push({ id: 'w' + Date.now(), name, done: false });
+        char.data.worldActivities.push({ id: 'w' + Date.now(), name, done: false });
         input.value = '';
         saveState();
-        renderWorld();
-      });
-    }
-
-    function initProfessionsHandlers() {
-      document.getElementById('addCharBtn').addEventListener('click', () => {
-        const input = document.getElementById('charNameInput');
-        const name = input.value.trim();
-        if (!name) return;
-        state.characters.push({
-          id: 'c' + Date.now(),
-          name,
-          professions: [],
-          lastConcUpdate: Date.now(),
-        });
-        input.value = '';
-        saveState();
-        renderProfessions();
-      });
-
-      document.getElementById('addProfBtn').addEventListener('click', () => {
-        const input = document.getElementById('profNameInput');
-        const name = input.value.trim();
-        if (!name) return;
-
-        const ch = state.characters.find(c => c.id === state.selectedCharId);
-        if (!ch) return;
-
-        ch.professions.push({
-          name,
-          concentration: 0,
-          maxConcentration: 100,
-          rate: 1,
-        });
-        input.value = '';
-        saveState();
-        renderProfessionsList();
-      });
-
-      document.getElementById('backToCharsBtn').addEventListener('click', () => {
-        state.selectedCharId = null;
-        document.getElementById('professionsPanel').style.display = 'none';
-        renderProfessions();
-      });
-    }
-
-    function initTasksHandlers() {
-      document.getElementById('addTaskBtn').addEventListener('click', () => {
-        const nameInput = document.getElementById('taskNameInput');
-        const periodSelect = document.getElementById('taskPeriodSelect');
-        const name = nameInput.value.trim();
-        if (!name) return;
-
-        state.tasks.push({
-          id: 't' + Date.now(),
-          name,
-          period: periodSelect.value,
-          done: false,
-        });
-
-        nameInput.value = '';
-        saveState();
-        renderTasks();
-      });
-    }
-
-    function initGoldHandlers() {
-      const today = new Date();
-      const iso = today.toISOString().slice(0, 10);
-      document.getElementById('orderDateInput').value = iso;
-
-      document.getElementById('addOrderBtn').addEventListener('click', () => {
-        const orderId = document.getElementById('orderIdInput').value.trim();
-        const amount = Number(document.getElementById('orderAmountInput').value);
-        const date = document.getElementById('orderDateInput').value;
-        const type = document.getElementById('orderTypeSelect').value;
-
-        if (!orderId || !amount || !date) {
-          alert('Заполни ID, сумму и дату');
-          return;
-        }
-
-        const typeLabels = {
-          boost: 'Буст',
-          craft: 'Крафт',
-          farm: 'Фарм',
-          other: 'Другое',
-        };
-
-        state.orders.push({
-          id: 'o' + Date.now(),
-          orderId,
-          amount,
-          date,
-          type,
-          typeLabel: typeLabels[type] || type,
-        });
-
-        document.getElementById('orderIdInput').value = '';
-        document.getElementById('orderAmountInput').value = '';
-        saveState();
-        renderGold();
-      });
-
-      document.querySelectorAll('[data-period]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const period = btn.getAttribute('data-period');
-          applyReportFilter(period);
-        });
-      });
-    }
-
-    function initSettingsHandlers() {
-      document.getElementById('resetDaySelect').addEventListener('change', (e) => {
-        state.resetDay = Number(e.target.value);
-        saveState();
-      });
-
-      document.getElementById('resetTimeInput').addEventListener('change', (e) => {
-        const [h, m] = e.target.value.split(':').map(Number);
-        state.resetHour = h;
-        state.resetMinute = m;
-        saveState();
-      });
-
-      document.getElementById('raiderRegionInput').addEventListener('change', (e) => {
-        state.raiderRegion = e.target.value.trim().toLowerCase() || 'eu';
-        saveState();
-      });
-
-      document.getElementById('raiderRealmInput').addEventListener('change', (e) => {
-        state.raiderRealm = e.target.value.trim().toLowerCase();
-        saveState();
-      });
-
-      document.getElementById('raiderNameInput').addEventListener('change', (e) => {
-        state.raiderName = e.target.value.trim();
-        saveState();
-      });
-
-      document.getElementById('resetAllDataBtn').addEventListener('click', () => {
-        if (confirm('Точно сбросить ВСЕ данные? Это действие необратимо.')) {
-          localStorage.removeItem(STORAGE_KEY);
-          state = defaultState();
-          renderAll();
-        }
+        renderVault();
       });
     }
 
     // =====================
     // Инициализация
     // =====================
-
-    function renderAll() {
-      renderVault();
-      renderProfessions();
-      renderTasks();
-      renderGold();
-      renderSettings();
-    }
 
     function init() {
       if (window.Telegram && window.Telegram.WebApp) {
@@ -1380,13 +968,11 @@
       }
 
       checkAndApplyWeeklyReset();
-      initTabs();
+      renderCharSelect();
+      renderVault();
+      initCharHandlers();
+      initConfigureHandlers();
       initVaultHandlers();
-      initProfessionsHandlers();
-      initTasksHandlers();
-      initGoldHandlers();
-      initSettingsHandlers();
-      renderAll();
     }
 
     init();
