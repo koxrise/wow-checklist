@@ -11,12 +11,9 @@
   <style>
     :root{
       --bg:#07090e;
-      --bg-2:#101522;
       --panel:#151a25;
       --panel-2:#0e121b;
-      --panel-light:#222a3a;
       --border:#3d4555;
-      --border-gold:#927332;
       --gold:#e7c56d;
       --gold-light:#ffe29a;
       --text:#edf2ff;
@@ -24,7 +21,6 @@
       --success:#6ed6a7;
       --danger:#ef8585;
       --blue:#87b8ff;
-      --purple:#c59bff;
       --shadow:0 12px 28px rgba(0,0,0,.42);
     }
 
@@ -76,8 +72,8 @@
       border:1px solid rgba(231,197,109,.55);
       border-radius:16px;
       background:
-        linear-gradient(120deg,rgba(5,8,13,.88),rgba(20,26,38,.84)),
-        url("https://wow.zamimg.com/images/wow/headers/main.jpg") center/cover;
+        radial-gradient(circle at 50% 20%,rgba(246,211,108,.16),transparent 37%),
+        linear-gradient(120deg,rgba(5,8,13,.9),rgba(20,26,38,.87));
       box-shadow:var(--shadow),inset 0 0 40px rgba(231,197,109,.08);
       text-align:center;
     }
@@ -126,7 +122,9 @@
       scrollbar-width:none;
     }
 
-    .tabs::-webkit-scrollbar{display:none}
+    .tabs::-webkit-scrollbar{
+      display:none;
+    }
 
     .tab-btn{
       flex:0 0 auto;
@@ -260,6 +258,12 @@
       line-height:1;
     }
 
+    .btn:disabled{
+      cursor:not-allowed;
+      opacity:.52;
+      filter:grayscale(.2);
+    }
+
     input[type="text"],
     input[type="number"],
     input[type="date"],
@@ -324,6 +328,7 @@
       position:relative;
       overflow:hidden;
       min-height:160px;
+      margin-bottom:12px;
       padding:15px;
       border:1px solid rgba(231,197,109,.58);
       border-radius:13px;
@@ -357,6 +362,9 @@
     }
 
     .vault-card-title{
+      display:flex;
+      align-items:center;
+      gap:8px;
       color:var(--gold-light);
       font-size:18px;
       font-weight:900;
@@ -475,19 +483,6 @@
       border:1px solid rgba(65,76,95,.75);
       border-radius:10px;
       background:rgba(0,0,0,.13);
-    }
-
-    .activity-icon{
-      width:31px;
-      height:31px;
-      display:grid;
-      place-items:center;
-      flex:0 0 31px;
-      border:1px solid rgba(231,197,109,.36);
-      border-radius:8px;
-      color:var(--gold);
-      background:rgba(231,197,109,.08);
-      font-size:16px;
     }
 
     .activity-name{
@@ -626,6 +621,79 @@
       text-align:center;
     }
 
+    .wow-icon{
+      width:32px;
+      height:32px;
+      flex:0 0 32px;
+      object-fit:cover;
+      border:1px solid rgba(231,197,109,.52);
+      border-radius:8px;
+      background:#090d15;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,.5),
+        0 3px 10px rgba(0,0,0,.36);
+    }
+
+    .wow-icon.small{
+      width:25px;
+      height:25px;
+      flex-basis:25px;
+      border-radius:6px;
+    }
+
+    .wow-icon.vault{
+      width:29px;
+      height:29px;
+      flex-basis:29px;
+    }
+
+    .prof-card{
+      margin-top:9px;
+      padding:10px;
+      border:1px solid rgba(65,76,95,.75);
+      border-radius:11px;
+      background:rgba(0,0,0,.14);
+    }
+
+    .prof-head{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .prof-name{
+      flex:1 1 auto;
+      min-width:0;
+      color:var(--text);
+      font-size:13px;
+      font-weight:800;
+    }
+
+    .concentration-value{
+      color:var(--gold-light);
+      font-size:14px;
+      font-weight:900;
+      white-space:nowrap;
+    }
+
+    .prof-meta{
+      margin-top:5px;
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.4;
+    }
+
+    .prof-actions{
+      display:flex;
+      gap:7px;
+      margin-top:10px;
+    }
+
+    .prof-actions input{
+      min-width:0;
+      flex:1 1 auto;
+    }
+
     .modal-overlay{
       position:fixed;
       inset:0;
@@ -647,7 +715,7 @@
       max-height:84vh;
       overflow:auto;
       padding:14px;
-      border:1px solid var(--border-gold);
+      border:1px solid #927332;
       border-radius:15px;
       background:linear-gradient(160deg,#202737,#0e131d);
       box-shadow:0 22px 60px rgba(0,0,0,.65);
@@ -676,6 +744,21 @@
       font-size:10px;
       line-height:1.45;
       text-align:center;
+    }
+
+    @media(max-width:390px){
+      .prof-actions{
+        flex-wrap:wrap;
+      }
+
+      .prof-actions input{
+        width:100%;
+        flex-basis:100%;
+      }
+
+      .prof-actions .btn{
+        flex:1 1 auto;
+      }
     }
   </style>
 </head>
@@ -715,8 +798,8 @@
         </div>
 
         <div class="hint">
-          M+ обновляется автоматически. Рейдовая сводка Raider.IO является сезонной;
-          недельные убийства боссов отмечаются вручную до подключения отдельного бэкенда.
+          Raider.IO подтягивает Mythic+ и отображает сезонную сводку рейдов.
+          Еженедельные убийства боссов пока отмечаются вручную.
         </div>
 
         <div id="raiderStatus" class="status"></div>
@@ -724,7 +807,15 @@
 
       <div class="vault-card">
         <div class="vault-card-head">
-          <div class="vault-card-title">The Great Vault</div>
+          <div class="vault-card-title">
+            <img
+              class="wow-icon vault"
+              src="https://wow.zamimg.com/images/wow/icons/large/inv_achievement_raidvaultofarchavon.jpg"
+              alt="Great Vault"
+            />
+            The Great Vault
+          </div>
+
           <div id="resetBadge" class="reset-badge">Ресет: —</div>
         </div>
 
@@ -749,7 +840,7 @@
       <div class="panel">
         <h2 class="panel-title">
           <span class="icon">⚔</span>
-          Рейд
+          Рейд — текущая неделя
         </h2>
 
         <div class="raid-grid">
@@ -770,13 +861,15 @@
         </div>
 
         <div class="row" style="margin-top:10px">
-          <button id="editRaidBtn" class="btn grow">Отметить недельных боссов</button>
+          <button id="editRaidBtn" class="btn grow">
+            Отметить недельных боссов
+          </button>
         </div>
 
         <div class="divider"></div>
 
         <div class="hint">
-          Сезонная сводка Raider.IO — справочная. Она не влияет на недельные цифры Great Vault.
+          Сезонная сводка Raider.IO не влияет на недельные показатели Great Vault.
         </div>
 
         <div id="raidSeasonProgress" style="margin-top:8px"></div>
@@ -789,10 +882,17 @@
         </h2>
 
         <div class="row">
+          <img
+            class="wow-icon"
+            src="https://wow.zamimg.com/images/wow/icons/large/achievement_challengemode_gold.jpg"
+            alt="Mythic+"
+          />
+
           <div class="grow">
             <div class="list-title">Ключи 10+ за текущую неделю</div>
-            <div class="list-subtitle">Цель для максимального прогресса: 8</div>
+            <div class="list-subtitle">Для полного прогресса нужно 8 ключей</div>
           </div>
+
           <button id="addKeyBtn" class="btn small primary">+1</button>
           <button id="resetKeysBtn" class="btn small">Сброс</button>
         </div>
@@ -801,6 +901,7 @@
           <div class="progress-bar">
             <div id="keysProgressFill" class="progress-fill"></div>
           </div>
+
           <div class="progress-text">
             <span>Mythic+ прогресс</span>
             <span id="keysProgressText">0 / 8</span>
@@ -815,7 +916,7 @@
         </h2>
 
         <div class="hint">
-          Любые 8 активностей закрывают World-ячейки. Например: 2 Delve + 6 Prey Hunt.
+          Нужны любые 8 активностей. Например: 2 Delve и 6 Prey Hunt.
         </div>
 
         <div id="worldActivitiesList" style="margin-top:10px"></div>
@@ -824,6 +925,7 @@
           <div class="progress-bar">
             <div id="worldProgressFill" class="progress-fill"></div>
           </div>
+
           <div class="progress-text">
             <span>World прогресс</span>
             <span id="worldProgressText">0 / 8</span>
@@ -869,11 +971,12 @@
       <div class="panel">
         <h2 class="panel-title">
           <span class="icon">⚒</span>
-          Профессии персонажа
+          Профессии
         </h2>
 
         <div class="hint">
-          Выбери персонажа и добавь профессии для учёта концентрации.
+          При добавлении профессии концентрация не выставляется искусственно в 0.
+          Введи актуальное значение — дальнейшее восстановление будет рассчитано автоматически.
         </div>
 
         <div class="row" style="margin-top:10px">
@@ -895,6 +998,7 @@
             <option value="Skinning">Skinning</option>
             <option value="Tailoring">Tailoring</option>
           </select>
+
           <button id="addProfBtn" class="btn small primary">Добавить</button>
         </div>
 
@@ -970,6 +1074,7 @@
           <span class="icon">≡</span>
           Последние заказы
         </h2>
+
         <div id="ordersList"></div>
       </div>
     </section>
@@ -992,8 +1097,8 @@
     </section>
 
     <footer class="footer">
-      WoW Great Vault Tracker · Данные хранятся локально в браузере.<br />
-      Ресет недели: среда, 09:00 по локальному времени.
+      WoW Great Vault Tracker · Данные сохраняются в браузере.<br />
+      Weekly reset: среда, 09:00 по локальному времени.
     </footer>
   </main>
 
@@ -1030,7 +1135,7 @@
       <h2 class="modal-title">Недельные убийства боссов</h2>
 
       <div class="hint">
-        Это ручной недельный трекер. После ресета в среду в 09:00 все отметки очистятся.
+        После ресета в среду, 09:00, эти отметки сбрасываются автоматически.
       </div>
 
       <div id="editRaidBossesList" style="margin-top:10px"></div>
@@ -1042,9 +1147,97 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'wowGreatVaultTrackerV1';
+    const STORAGE_KEY='wowGreatVaultTrackerV3';
 
-    const BOSS_ORDER = [
+    const CONCENTRATION_MAX=1000;
+    const CONCENTRATION_REGEN_EVERY_MS=6*60*1000;
+
+    const CONCENTRATION_ICON=
+      'https://wow.zamimg.com/images/wow/icons/large/ui_concentration.jpg';
+
+    const VAULT_ICON=
+      'https://wow.zamimg.com/images/wow/icons/large/inv_achievement_raidvaultofarchavon.jpg';
+
+    const KEYSTONE_ICON=
+      'https://wow.zamimg.com/images/wow/icons/large/achievement_challengemode_gold.jpg';
+
+    const DELVE_ICON=
+      'https://wow.zamimg.com/images/wow/icons/large/achievement_raidchallenge.jpg';
+
+    const PREY_HUNT_ICON=
+      'https://wow.zamimg.com/images/wow/icons/large/ability_hunter_assassinate2.jpg';
+
+    const ZONE_EVENT_ICON=
+      'https://wow.zamimg.com/images/wow/icons/large/achievement_zone_thehinterlands_01.jpg';
+
+    const PROFESSION_ICONS={
+      Alchemy:
+        'https://wow.zamimg.com/images/wow/icons/large/ui_profession_alchemy.jpg',
+
+      Blacksmithing:
+        'https://wow.zamimg.com/images/wow/icons/large/ui_profession_blacksmithing.jpg',
+
+      Enchanting:
+        'https://wow.zamimg.com/images/wow/icons/large/ui_profession_enchanting.jpg',
+
+      Engineering:
+        'https://wow.zamimg.com/images/wow/icons/large/ui_profession_engineering.jpg',
+
+      Herbalism:
+        'https://wow.zamimg.com/images/wow/icons/large/inv_herb_06.jpg',
+
+      Inscription:
+        'https://wow.zamimg.com/images/wow/icons/large/ui_profession_inscription.jpg',
+
+      Jewelcrafting:
+        'https://wow.zamimg.com/images/wow/icons/large/ui_profession_jewelcrafting.jpg',
+
+      Leatherworking:
+        'https://wow.zamimg.com/images/wow/icons/large/ui_profession_leatherworking.jpg',
+
+      Mining:
+        'https://wow.zamimg.com/images/wow/icons/large/inv_ore_01.jpg',
+
+      Skinning:
+        'https://wow.zamimg.com/images/wow/icons/large/inv_misc_pelt_01.jpg',
+
+      Tailoring:
+        'https://wow.zamimg.com/images/wow/icons/large/ui_profession_tailoring.jpg'
+    };
+
+    const BOSS_ICONS={
+      "Nek'zali the Soulcoiler":
+        'https://wow.zamimg.com/images/wow/icons/large/inv_121_raid_achievement_priestess.jpg',
+
+      "Nek’zali the Soulcoiler":
+        'https://wow.zamimg.com/images/wow/icons/large/inv_121_raid_achievement_priestess.jpg',
+
+      'Entombed Sentinels':
+        'https://wow.zamimg.com/images/wow/icons/large/inv_121_raid_achievement_golems.jpg',
+
+      'Vashnik the Malignant':
+        'https://wow.zamimg.com/images/wow/icons/large/inv_121_raid_achievement_alchemist.jpg',
+
+      'The Lost Explorers':
+        'https://wow.zamimg.com/images/wow/icons/large/inv_121_raid_achievement_tortollans.jpg',
+
+      'The Twin Fangs':
+        'https://wow.zamimg.com/images/wow/icons/large/inv_121_raid_achievement_twins.jpg',
+
+      'The Coiled Altar':
+        'https://wow.zamimg.com/images/wow/icons/large/inv_121_raid_achievement_zuljinmalacrass.jpg',
+
+      "Ula'tek":
+        'https://wow.zamimg.com/images/wow/icons/large/inv_121_raid_achievement_ulatek.jpg',
+
+      "Ula’tek":
+        'https://wow.zamimg.com/images/wow/icons/large/inv_121_raid_achievement_ulatek.jpg',
+
+      'Nymrissa Wavecaller':
+        'https://wow.zamimg.com/images/wow/icons/large/achievement_boss_elitenagamale.jpg'
+    };
+
+    const BOSS_ORDER=[
       'Nek’zali the Soulcoiler',
       'Entombed Sentinels',
       'Vashnik the Malignant',
@@ -1055,41 +1248,44 @@
       'Nymrissa Wavecaller'
     ];
 
-    const PROFESSION_ICONS = {
-      Alchemy:'⚗',
-      Blacksmithing:'⚒',
-      Enchanting:'✧',
-      Engineering:'⚙',
-      Herbalism:'♧',
-      Inscription:'✎',
-      Jewelcrafting:'◈',
-      Leatherworking:'◫',
-      Mining:'⛏',
-      Skinning:'◌',
-      Tailoring:'✦'
-    };
-
-    let activeGoldPeriod = 'all';
+    let activeGoldPeriod='all';
 
     function generateId(prefix='id'){
-      return prefix + '_' + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+      return prefix+'_'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);
     }
 
     function defaultCharData(){
-      return {
+      return{
         raidBosses:BOSS_ORDER.map((name,index)=>({
           id:'boss_'+index,
           name,
           done:false,
-          difficulty:'normal'
+          difficulty:'normal',
+          killTime:null,
+          source:null
         })),
 
         keysCount:0,
 
         worldActivities:[
-          {id:'delve',name:'Delve',icon:'◈',count:0},
-          {id:'prey',name:'Prey Hunt',icon:'◉',count:0},
-          {id:'event',name:'Zone Event',icon:'✦',count:0}
+          {
+            id:'delve',
+            name:'Delve',
+            icon:DELVE_ICON,
+            count:0
+          },
+          {
+            id:'prey',
+            name:'Prey Hunt',
+            icon:PREY_HUNT_ICON,
+            count:0
+          },
+          {
+            id:'event',
+            name:'Zone Event',
+            icon:ZONE_EVENT_ICON,
+            count:0
+          }
         ],
 
         tasks:{
@@ -1116,13 +1312,13 @@
     }
 
     function defaultCharSettings(){
-      return {
+      return{
         showTasks:true
       };
     }
 
     function defaultState(){
-      return {
+      return{
         characters:[],
         selectedCharId:null,
         lastResetTimestamp:null,
@@ -1132,7 +1328,7 @@
 
     function loadState(){
       try{
-        const raw = localStorage.getItem(STORAGE_KEY);
+        const raw=localStorage.getItem(STORAGE_KEY);
         return raw ? JSON.parse(raw) : defaultState();
       }catch(error){
         console.error('Не удалось загрузить localStorage:',error);
@@ -1140,7 +1336,7 @@
       }
     }
 
-    let state = loadState();
+    let state=loadState();
 
     function saveState(){
       localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
@@ -1164,6 +1360,23 @@
           char.data.raidBosses=defaultCharData().raidBosses;
         }
 
+        BOSS_ORDER.forEach((name,index)=>{
+          if(!char.data.raidBosses[index]){
+            char.data.raidBosses[index]={
+              id:'boss_'+index,
+              name,
+              done:false,
+              difficulty:'normal',
+              killTime:null,
+              source:null
+            };
+          }
+
+          if(!char.data.raidBosses[index].name){
+            char.data.raidBosses[index].name=name;
+          }
+        });
+
         const oldActivities=Array.isArray(char.data.worldActivities)
           ? char.data.worldActivities
           : [];
@@ -1181,9 +1394,24 @@
           .reduce((sum,item)=>sum+Number(item.count||0),0);
 
         char.data.worldActivities=[
-          {id:'delve',name:'Delve',icon:'◈',count:delveCount},
-          {id:'prey',name:'Prey Hunt',icon:'◉',count:preyCount},
-          {id:'event',name:'Zone Event',icon:'✦',count:eventCount}
+          {
+            id:'delve',
+            name:'Delve',
+            icon:DELVE_ICON,
+            count:delveCount
+          },
+          {
+            id:'prey',
+            name:'Prey Hunt',
+            icon:PREY_HUNT_ICON,
+            count:preyCount
+          },
+          {
+            id:'event',
+            name:'Zone Event',
+            icon:ZONE_EVENT_ICON,
+            count:eventCount
+          }
         ];
 
         if(!char.data.tasks){
@@ -1207,6 +1435,27 @@
           char.data.professions=[];
         }
 
+        char.data.professions.forEach(profession=>{
+          if(profession.maxConcentration===undefined){
+            profession.maxConcentration=CONCENTRATION_MAX;
+          }
+
+          if(profession.concentrationUpdatedAt===undefined){
+            profession.concentrationUpdatedAt=null;
+          }
+
+          /*
+            Старые версии приложения могли создать profession.concentration=0.
+            Не считаем этот ноль валидным значением без даты ручного ввода.
+          */
+          if(
+            profession.concentration===0 &&
+            !profession.concentrationUpdatedAt
+          ){
+            profession.concentration=null;
+          }
+        });
+
         if(!char.data.raiderSeasonProgress){
           char.data.raiderSeasonProgress={
             venomous:null,
@@ -1220,10 +1469,7 @@
         state.orders=[];
       }
 
-      if(
-        !state.selectedCharId &&
-        state.characters.length > 0
-      ){
+      if(!state.selectedCharId && state.characters.length>0){
         state.selectedCharId=state.characters[0].id;
       }
 
@@ -1253,8 +1499,7 @@
     }
 
     function getNextWeeklyReset(){
-      const last=getLastWeeklyReset();
-      const next=new Date(last);
+      const next=new Date(getLastWeeklyReset());
       next.setDate(next.getDate()+7);
       return next;
     }
@@ -1270,10 +1515,7 @@
     function checkAndApplyWeeklyReset(){
       const resetTimestamp=getLastWeeklyReset().getTime();
 
-      if(
-        !state.lastResetTimestamp ||
-        resetTimestamp > state.lastResetTimestamp
-      ){
+      if(!state.lastResetTimestamp || resetTimestamp>state.lastResetTimestamp){
         state.lastResetTimestamp=resetTimestamp;
 
         state.characters.forEach(char=>{
@@ -1282,6 +1524,8 @@
           char.data.raidBosses.forEach(boss=>{
             boss.done=false;
             boss.difficulty='normal';
+            boss.killTime=null;
+            boss.source=null;
           });
 
           char.data.worldActivities.forEach(activity=>{
@@ -1290,7 +1534,6 @@
 
           char.data.tasks.capcake=false;
           char.data.tasks.crests=false;
-
           char.data.housing.capcake=false;
         });
 
@@ -1314,23 +1557,17 @@
             el.className='status';
             el.textContent='';
           }
-        },6000);
+        },6500);
       }
     }
 
     function switchTab(tabName){
       document.querySelectorAll('.tab-btn').forEach(button=>{
-        button.classList.toggle(
-          'active',
-          button.dataset.tab===tabName
-        );
+        button.classList.toggle('active',button.dataset.tab===tabName);
       });
 
       document.querySelectorAll('.section').forEach(section=>{
-        section.classList.toggle(
-          'active',
-          section.id===tabName
-        );
+        section.classList.toggle('active',section.id===tabName);
       });
 
       if(tabName==='vault'){
@@ -1454,9 +1691,8 @@
     }
 
     function renderResetBadge(){
-      const next=getNextWeeklyReset();
       document.getElementById('resetBadge').textContent=
-        'Ресет: '+formatDateTime(next);
+        'Ресет: '+formatDateTime(getNextWeeklyReset());
     }
 
     function renderRaidSummary(data){
@@ -1480,13 +1716,12 @@
     function renderKeys(data){
       const count=Number(data.keysCount||0);
       const capped=Math.min(count,8);
-      const completed=count>=8;
 
       document.getElementById('keysProgressFill').style.width=
         (capped/8*100)+'%';
 
       document.getElementById('keysProgressText').textContent=
-        completed ? `${count} / 8 — максимум закрыт` : `${count} / 8`;
+        count>=8 ? `${count} / 8 — максимум закрыт` : `${count} / 8`;
     }
 
     function renderWorld(data){
@@ -1497,9 +1732,10 @@
         const row=document.createElement('div');
         row.className='activity-row';
 
-        const icon=document.createElement('div');
-        icon.className='activity-icon';
-        icon.textContent=activity.icon || '◈';
+        const icon=document.createElement('img');
+        icon.className='wow-icon';
+        icon.alt=activity.name;
+        icon.src=activity.icon || DELVE_ICON;
 
         const label=document.createElement('div');
         label.className='activity-name';
@@ -1511,6 +1747,7 @@
         const minus=document.createElement('button');
         minus.className='btn small icon-btn';
         minus.textContent='−';
+
         minus.addEventListener('click',()=>{
           const char=getSelectedChar();
           if(!char) return;
@@ -1531,6 +1768,7 @@
         const plus=document.createElement('button');
         plus.className='btn small icon-btn primary';
         plus.textContent='+';
+
         plus.addEventListener('click',()=>{
           const char=getSelectedChar();
           if(!char) return;
@@ -1555,17 +1793,18 @@
       );
 
       const capped=Math.min(total,8);
-      const isComplete=total>=8;
+      const complete=total>=8;
 
       document.getElementById('worldProgressFill').style.width=
         (capped/8*100)+'%';
 
       const text=document.getElementById('worldProgressText');
-      text.textContent=isComplete
+
+      text.textContent=complete
         ? `${total} / 8 — Great Vault закрыт`
         : `${total} / 8`;
 
-      text.style.color=isComplete ? 'var(--success)' : '';
+      text.style.color=complete ? 'var(--success)' : '';
     }
 
     function renderTasks(char){
@@ -1640,21 +1879,19 @@
         const heroic=Number(raid.data.heroic_bosses_killed||0);
         const mythic=Number(raid.data.mythic_bosses_killed||0);
 
-        meta.textContent=
-          `Сезон: ${normal} N · ${heroic} H · ${mythic} M`;
+        meta.textContent=`Сезон: ${normal} N · ${heroic} H · ${mythic} M`;
 
         card.append(name,summary,meta);
         container.appendChild(card);
       });
 
       if(season.updatedAt){
-        const updated=new Date(season.updatedAt);
-        const updateText=document.createElement('div');
-        updateText.className='hint';
-        updateText.style.marginTop='8px';
-        updateText.textContent=
-          'Обновлено: '+formatDateTime(updated);
-        container.appendChild(updateText);
+        const updated=document.createElement('div');
+        updated.className='hint';
+        updated.style.marginTop='8px';
+        updated.textContent=
+          'Raider.IO обновлён: '+formatDateTime(new Date(season.updatedAt));
+        container.appendChild(updated);
       }
     }
 
@@ -1673,12 +1910,23 @@
         const row=document.createElement('div');
         row.className='boss-row';
 
+        const bossIcon=document.createElement('img');
+        bossIcon.className='wow-icon small';
+        bossIcon.alt=boss.name;
+        bossIcon.src=BOSS_ICONS[boss.name] || VAULT_ICON;
+
         const checkbox=document.createElement('input');
         checkbox.type='checkbox';
         checkbox.checked=Boolean(boss.done);
 
         checkbox.addEventListener('change',()=>{
           char.data.raidBosses[index].done=checkbox.checked;
+          char.data.raidBosses[index].source='manual';
+
+          if(!checkbox.checked){
+            char.data.raidBosses[index].killTime=null;
+          }
+
           saveState();
           renderVault();
         });
@@ -1704,11 +1952,12 @@
 
         select.addEventListener('change',()=>{
           char.data.raidBosses[index].difficulty=select.value;
+          char.data.raidBosses[index].source='manual';
           saveState();
           renderVault();
         });
 
-        row.append(checkbox,name,select);
+        row.append(bossIcon,checkbox,name,select);
         container.appendChild(row);
       });
 
@@ -1723,13 +1972,88 @@
     function renderHousing(){
       const char=getSelectedChar();
 
-      const ids=['capcake','neighbor','vendors'];
-
-      ids.forEach(id=>{
+      ['capcake','neighbor','vendors'].forEach(id=>{
         const input=document.getElementById(id+'Checkbox');
         input.disabled=!char;
         input.checked=char ? Boolean(char.data.housing[id]) : false;
       });
+    }
+
+    function getCalculatedConcentration(profession){
+      const max=Number(profession.maxConcentration || CONCENTRATION_MAX);
+
+      if(
+        profession.concentration===null ||
+        profession.concentration===undefined ||
+        !profession.concentrationUpdatedAt
+      ){
+        return null;
+      }
+
+      const base=Math.max(0,Number(profession.concentration || 0));
+
+      const updatedAt=new Date(profession.concentrationUpdatedAt).getTime();
+
+      if(Number.isNaN(updatedAt)){
+        return null;
+      }
+
+      const elapsedMs=Math.max(0,Date.now()-updatedAt);
+
+      const regenerated=Math.floor(
+        elapsedMs/CONCENTRATION_REGEN_EVERY_MS
+      );
+
+      return Math.min(max,base+regenerated);
+    }
+
+    function getConcentrationDetails(profession){
+      const max=Number(profession.maxConcentration || CONCENTRATION_MAX);
+      const current=getCalculatedConcentration(profession);
+
+      if(current===null){
+        return{
+          current:null,
+          max,
+          regenerated:0,
+          pointsToCap:null,
+          msToCap:null
+        };
+      }
+
+      const base=Number(profession.concentration||0);
+      const pointsToCap=Math.max(0,max-current);
+
+      return{
+        current,
+        max,
+        regenerated:Math.max(0,current-base),
+        pointsToCap,
+        msToCap:pointsToCap*CONCENTRATION_REGEN_EVERY_MS
+      };
+    }
+
+    function formatDuration(milliseconds){
+      if(milliseconds===null || milliseconds===undefined){
+        return '—';
+      }
+
+      if(milliseconds<=0){
+        return 'полная';
+      }
+
+      const totalMinutes=Math.ceil(milliseconds/(60*1000));
+      const days=Math.floor(totalMinutes/(60*24));
+      const hours=Math.floor((totalMinutes%(60*24))/60);
+      const minutes=totalMinutes%60;
+
+      const parts=[];
+
+      if(days>0) parts.push(`${days} д.`);
+      if(hours>0) parts.push(`${hours} ч.`);
+      if(days===0 && minutes>0) parts.push(`${minutes} мин.`);
+
+      return parts.join(' ');
     }
 
     function renderProfessions(){
@@ -1755,7 +2079,6 @@
       });
 
       select.value=state.selectedCharId || state.characters[0].id;
-
       renderProfessionsList();
     }
 
@@ -1770,51 +2093,179 @@
         return;
       }
 
+      if(!Array.isArray(char.data.professions)){
+        char.data.professions=[];
+      }
+
       if(char.data.professions.length===0){
         container.innerHTML='<div class="empty">Профессии пока не добавлены.</div>';
         return;
       }
 
       char.data.professions.forEach((profession,index)=>{
-        const row=document.createElement('div');
-        row.className='list-row';
+        const details=getConcentrationDetails(profession);
 
-        const icon=document.createElement('div');
-        icon.className='activity-icon';
-        icon.textContent=PROFESSION_ICONS[profession.name] || '⚒';
+        const card=document.createElement('div');
+        card.className='prof-card';
 
-        const main=document.createElement('div');
-        main.className='list-main';
+        const head=document.createElement('div');
+        head.className='prof-head';
 
-        const title=document.createElement('div');
-        title.className='list-title';
-        title.textContent=profession.name;
+        const icon=document.createElement('img');
+        icon.className='wow-icon';
+        icon.alt=profession.name;
+        icon.src=PROFESSION_ICONS[profession.name] || CONCENTRATION_ICON;
 
-        const subtitle=document.createElement('div');
-        subtitle.className='list-subtitle';
-        subtitle.textContent=
-          `Концентрация: ${Number(profession.concentration||0)} / 100`;
+        const name=document.createElement('div');
+        name.className='prof-name';
+        name.textContent=profession.name;
 
-        main.append(title,subtitle);
+        const value=document.createElement('div');
+        value.className='concentration-value';
 
-        const remove=document.createElement('button');
-        remove.className='btn small danger';
-        remove.textContent='×';
+        value.textContent=details.current===null
+          ? `— / ${details.max}`
+          : `${details.current} / ${details.max}`;
 
-        remove.addEventListener('click',()=>{
+        const deleteButton=document.createElement('button');
+        deleteButton.className='btn small danger';
+        deleteButton.textContent='×';
+        deleteButton.title='Удалить профессию';
+
+        deleteButton.addEventListener('click',()=>{
           char.data.professions.splice(index,1);
           saveState();
           renderProfessionsList();
         });
 
-        row.append(icon,main,remove);
-        container.appendChild(row);
+        head.append(icon,name,value,deleteButton);
+
+        const progressWrap=document.createElement('div');
+        progressWrap.className='progress-wrap';
+
+        const progressBar=document.createElement('div');
+        progressBar.className='progress-bar';
+
+        const progressFill=document.createElement('div');
+        progressFill.className='progress-fill';
+
+        const percent=details.current===null
+          ? 0
+          : Math.min(100,(details.current/details.max)*100);
+
+        progressFill.style.width=percent+'%';
+
+        progressBar.appendChild(progressFill);
+
+        const meta=document.createElement('div');
+        meta.className='prof-meta';
+
+        if(details.current===null){
+          meta.textContent=
+            'Укажи текущую концентрацию. Приложение не будет считать её от нуля.';
+        }else if(details.current>=details.max){
+          meta.textContent=
+            'Концентрация заполнена. Потрать её, чтобы не терять восстановление.';
+        }else{
+          meta.textContent=
+            `Восстановлено с последнего ввода: +${details.regenerated}. `+
+            `До капа: ${formatDuration(details.msToCap)}.`;
+        }
+
+        progressWrap.append(progressBar,meta);
+
+        const actions=document.createElement('div');
+        actions.className='prof-actions';
+
+        const concentrationInput=document.createElement('input');
+        concentrationInput.type='number';
+        concentrationInput.min='0';
+        concentrationInput.max=String(details.max);
+        concentrationInput.step='1';
+        concentrationInput.placeholder='Текущая концентрация';
+
+        concentrationInput.value=details.current===null
+          ? ''
+          : String(details.current);
+
+        const saveButton=document.createElement('button');
+        saveButton.className='btn small primary';
+        saveButton.textContent='Установить';
+
+        saveButton.addEventListener('click',()=>{
+          const raw=concentrationInput.value.trim();
+          const entered=Number(raw);
+
+          if(raw==='' || !Number.isFinite(entered)){
+            alert('Введи текущее значение концентрации.');
+            return;
+          }
+
+          profession.concentration=Math.max(
+            0,
+            Math.min(details.max,Math.floor(entered))
+          );
+
+          profession.maxConcentration=details.max;
+          profession.concentrationUpdatedAt=Date.now();
+
+          saveState();
+          renderProfessionsList();
+        });
+
+        const spendButton=document.createElement('button');
+        spendButton.className='btn small';
+        spendButton.textContent='Потратил';
+
+        spendButton.addEventListener('click',()=>{
+          const current=details.current;
+
+          if(current===null){
+            alert('Сначала укажи текущую концентрацию.');
+            return;
+          }
+
+          const spentRaw=prompt(
+            `Сколько концентрации потрачено?\nСейчас: ${current} / ${details.max}`,
+            ''
+          );
+
+          if(spentRaw===null){
+            return;
+          }
+
+          const spent=Number(spentRaw);
+
+          if(!Number.isFinite(spent) || spent<=0){
+            alert('Введи число больше нуля.');
+            return;
+          }
+
+          profession.concentration=Math.max(
+            0,
+            current-Math.floor(spent)
+          );
+
+          profession.maxConcentration=details.max;
+          profession.concentrationUpdatedAt=Date.now();
+
+          saveState();
+          renderProfessionsList();
+        });
+
+        actions.append(concentrationInput,saveButton,spendButton);
+
+        card.append(head,progressWrap,actions);
+        container.appendChild(card);
       });
     }
 
     function formatDate(iso){
       const date=new Date(iso);
-      if(Number.isNaN(date.getTime())) return '—';
+
+      if(Number.isNaN(date.getTime())){
+        return '—';
+      }
 
       const day=String(date.getDate()).padStart(2,'0');
       const month=String(date.getMonth()+1).padStart(2,'0');
@@ -1904,10 +2355,7 @@
       document.getElementById('reportAvg').textContent=avg.toLocaleString('ru-RU');
 
       document.querySelectorAll('[data-period]').forEach(button=>{
-        button.classList.toggle(
-          'primary',
-          button.dataset.period===period
-        );
+        button.classList.toggle('primary',button.dataset.period===period);
       });
     }
 
@@ -1990,7 +2438,7 @@
         return normalizeRaidKey(key).includes('tideboundgrotto');
       });
 
-      return {
+      return{
         venomous:venomous ? venomous[1] : null,
         tidebound:tidebound ? tidebound[1] : null
       };
@@ -2010,8 +2458,14 @@
       }
 
       const region=String(char.region || 'eu').toLowerCase();
+      const button=document.getElementById('updateDataBtn');
 
-      showStatus('Raider.IO: загружаю Mythic+ и сезонную сводку рейдов...','info');
+      button.disabled=true;
+
+      showStatus(
+        'Raider.IO: загружаю Mythic+ и сезонную сводку рейдов...',
+        'info'
+      );
 
       try{
         const url=
@@ -2056,15 +2510,18 @@
         const tideboundSummary=raids.tidebound?.summary || 'нет данных';
 
         showStatus(
-          `Обновлено: ${keys} ключей 10+ · Venomous Abyss: ${venomousSummary} · Tidebound Grotto: ${tideboundSummary}`,
+          `Raider.IO обновлён: ${keys} ключей 10+ · Abyss: ${venomousSummary} · Grotto: ${tideboundSummary}`,
           'success'
         );
       }catch(error){
         console.error('Raider.IO error:',error);
+
         showStatus(
           'Не удалось загрузить Raider.IO: '+error.message,
           'error'
         );
+      }finally{
+        button.disabled=false;
       }
     }
 
@@ -2096,8 +2553,15 @@
         switchTab('chars');
       });
 
-      document.getElementById('addCharOpenBtn').addEventListener('click',openAddCharModal);
-      document.getElementById('cancelAddCharBtn').addEventListener('click',closeAddCharModal);
+      document.getElementById('addCharOpenBtn').addEventListener(
+        'click',
+        openAddCharModal
+      );
+
+      document.getElementById('cancelAddCharBtn').addEventListener(
+        'click',
+        closeAddCharModal
+      );
 
       document.getElementById('saveAddCharBtn').addEventListener('click',()=>{
         const name=document.getElementById('newCharNameInput').value.trim();
@@ -2145,6 +2609,7 @@
 
       document.getElementById('addKeyBtn').addEventListener('click',()=>{
         const char=getSelectedChar();
+
         if(!char) return;
 
         char.data.keysCount=Math.min(
@@ -2158,6 +2623,7 @@
 
       document.getElementById('resetKeysBtn').addEventListener('click',()=>{
         const char=getSelectedChar();
+
         if(!char) return;
 
         if(!confirm('Сбросить счётчик Mythic+ ключей?')){
@@ -2172,6 +2638,7 @@
       ['capcake','neighbor','vendors'].forEach(id=>{
         document.getElementById(id+'Checkbox').addEventListener('change',event=>{
           const char=getSelectedChar();
+
           if(!char) return;
 
           char.data.housing[id]=event.target.checked;
@@ -2213,7 +2680,14 @@
         char.data.professions.push({
           id:generateId('prof'),
           name:professionName,
-          concentration:0
+
+          /*
+            Не ставим 0: пользователь сам вводит реальное текущее значение.
+          */
+          concentration:null,
+          concentrationUpdatedAt:null,
+
+          maxConcentration:CONCENTRATION_MAX
         });
 
         select.value='';
@@ -2289,6 +2763,7 @@
       migrateState();
       checkAndApplyWeeklyReset();
       initEvents();
+
       renderCharacterSelect();
       renderVault();
       renderHousing();
@@ -2299,6 +2774,18 @@
       if(state.characters.length===0){
         openAddCharModal();
       }
+
+      /*
+        Перерисовываем профессии раз в минуту, чтобы значение
+        концентрации и время до капа обновлялись на открытой вкладке.
+      */
+      setInterval(()=>{
+        const professionsTab=document.getElementById('professions');
+
+        if(professionsTab.classList.contains('active')){
+          renderProfessionsList();
+        }
+      },60000);
     }
 
     init();
